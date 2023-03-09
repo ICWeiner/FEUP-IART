@@ -5,14 +5,14 @@ def get_square_under_mouse(board):
     mouse_pos = pygame.Vector2(pygame.mouse.get_pos())
     x, y = [int(v // TILESIZE) for v in mouse_pos]
     try: 
-        if x >= 0 and y >= 0: return (board.get_piece(y,x), x, y)
+        if x >= 0 and y >= 0: return (board.get_square(y,x), x, y)
     except IndexError: pass
     return None, None, None
 
 
-def draw_selector(screen, piece, x, y):
+def draw_selector(screen, piece):
     if piece != None:
-        rect = (x * TILESIZE, y * TILESIZE, TILESIZE, TILESIZE)
+        rect = (piece.x * TILESIZE, piece.y * TILESIZE, TILESIZE, TILESIZE)
         pygame.draw.rect(screen, (255, 0, 0, 50), rect, 2)
 
 

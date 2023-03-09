@@ -27,13 +27,13 @@ def main():
                     selected_piece = piece, x, y
 
             if e.type == pygame.MOUSEBUTTONUP:
-                board.verify_and_set_position(drop_pos, selected_piece)
+                board.set_position(drop_pos, selected_piece)
                 selected_piece = None
                 drop_pos = None
 
         screen.blit(board_surf, (0, 0))
         board.draw_pieces(screen, font, selected_piece)
-        draw_selector(screen, piece, x, y)
+        draw_selector(screen, piece)
         drop_pos = draw_drag(screen, board, selected_piece, font)
 
         pygame.display.flip()

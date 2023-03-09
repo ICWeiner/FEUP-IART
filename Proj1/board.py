@@ -13,15 +13,15 @@ class Board:
             for x in range(self.rows):
                 self.board[y].append(None)
 
-        self.board[0][0] = Piece('red', '■')
-        self.board[1][0] = Piece('red', '■')
-        self.board[1][1] = Piece('red', '■')
-        self.board[0][1] = Piece('green', '■')
-        self.board[0][3] = Piece('yellow', '■')
-        self.board[2][2] = Piece('green', '■')
-        self.board[2][3] = Piece('green', '■')
-        self.board[3][2] = Piece('green', '■')
-        self.board[3][3] = Piece('red', '■')
+        self.board[0][0] = Piece('red', '■', 0, 0)
+        self.board[1][0] = Piece('red', '■', 1, 0)
+        self.board[1][1] = Piece('red', '■', 1, 1)
+        self.board[0][1] = Piece('green', '■', 0, 1)
+        self.board[0][3] = Piece('yellow', '■', 0, 3)
+        self.board[2][2] = Piece('green', '■', 2, 2)
+        self.board[2][3] = Piece('green', '■', 2, 3)
+        self.board[3][2] = Piece('green', '■', 3, 2)
+        self.board[3][3] = Piece('red', '■', 3, 3)
 
 
     def create_board_surf(self):
@@ -37,6 +37,7 @@ class Board:
 
     def draw_pieces(self, screen, font, selected_piece):
         sx, sy = None, None
+        selected = False
         if selected_piece:
             piece, sx, sy = selected_piece
 
@@ -45,31 +46,36 @@ class Board:
                 piece = self.board[y][x]
                 if piece:
                     selected = x == sx and y == sy
-                    piece.draw(screen, font, x, y, selected)
+                    piece.draw(screen, font, selected)
 
 
-    def verify_and_set_position(self, drop_pos, selected_piece):
+    def verify_position(self, new_x, new_y, old_x, old_y):
+        if (self.get_square(new_y, new_x) is not None
+            or abs(new_x - old_x) > 1 or abs(new_y - old_y) > 1
+            or abs(new_x - old_x) == 1 and abs(new_y - old_y) == 1
+            ):
+            return False
+
+        return True
+
+
+    def set_position(self, drop_pos, selected_piece):
         if drop_pos:
             new_x, new_y = drop_pos
             piece, old_x, old_y = selected_piece
-            if not (self.get_piece(new_y, new_x) != None 
-                or new_x > old_x+1 or new_y > old_y+1 
-                or new_x < old_x-1 or new_y < old_y-1
-                or ((old_x+1 == new_x and old_y+1 == new_y)
-                or (old_x-1 == new_x and old_y-1 == new_y)
-                or (old_x-1 == new_x and old_y+1 == new_y)
-                or (old_x+1 == new_x and old_y-1 == new_y))
-            ):
-                self.set_piece(old_y, old_x, None)
-                self.set_piece(new_y, new_x, piece)
-                
-        return None
+            if self.verify_position(new_x, new_y, old_x, old_y):
+                self.set_square(old_y, old_x, None)
+                self.set_square(new_y, new_x, piece)
+                return True
+        return False
     
 
-    def get_piece(self, y, x):
+    def get_square(self, y, x):
         return self.board[y][x]
 
 
-    def set_piece(self, y, x, piece):
+    def set_square(self, y, x, piece):
         self.board[y][x] = piece
+        if piece != None: piece.set_piece(y,x)
+
 
