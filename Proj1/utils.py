@@ -21,11 +21,11 @@ def draw_drag(screen, board, selected_piece, font):
         piece, x, y = get_square_under_mouse(board)
         if x != None:
             rect = (x * TILESIZE, y * TILESIZE, TILESIZE, TILESIZE)
-            pygame.draw.rect(screen, (0, 255, 0, 50), rect, 2)
+            isValid = board.verify_position(x, y, selected_piece[0].x, selected_piece[0].y)
+            pygame.draw.rect(screen, (0, 255, 0, 50) if isValid else pygame.Color('red'), rect, 2)
 
-        color, type = (selected_piece[0].color, selected_piece[0].type)
-        s1 = font.render(type[0], True, pygame.Color(color))
-        s2 = font.render(type[0], True, pygame.Color('darkgrey'))
+        s1 = font.render(selected_piece[0].type, True, pygame.Color(selected_piece[0].color))
+        s2 = font.render(selected_piece[0].type, True, pygame.Color('darkgrey'))
         pos = pygame.Vector2(pygame.mouse.get_pos())
         screen.blit(s2, s2.get_rect(center=pos + (1, 1)))
         screen.blit(s1, s1.get_rect(center=pos))
