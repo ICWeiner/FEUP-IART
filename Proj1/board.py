@@ -24,6 +24,15 @@ class Board:
         self.board[3][3] = Piece('red', '■', 3, 3)
 
 
+    def get_square(self, y, x):
+        return self.board[y][x]
+
+
+    def set_square(self, y, x, piece):
+        self.board[y][x] = piece
+        if piece != None: piece.set_piece(y,x)
+
+
     def create_board_surf(self):
         board_surf = pygame.Surface((TILESIZE * self.rows, TILESIZE * self.cols))
 
@@ -68,14 +77,68 @@ class Board:
                 self.set_square(new_y, new_x, piece)
                 return True
         return False
+
+
+    def get_connected_pieces(self, piece):
+        if piece == None: return set()
+        color = piece.color
+        visited = set()
+        connected = set()
+
+        def dfs(x, y):
+            if (x, y) in visited:
+                return
+            visited.add((x, y))
+
+            if self.get_square(y, x) and self.get_square(y, x).color == color:
+                connected.add(self.get_square(y, x))
+
+                if x > 0:
+                    dfs(x - 1, y)
+                if x < self.cols - 1:
+                    dfs(x + 1, y)
+                if y > 0:
+                    dfs(x, y - 1)
+                if y < self.rows - 1:
+                    dfs(x, y + 1)
+
+        dfs(piece.x, piece.y)
+        return list(connected)
     
 
-    def get_square(self, y, x):
-        return self.board[y][x]
+##################################
 
 
-    def set_square(self, y, x, piece):
-        self.board[y][x] = piece
-        if piece != None: piece.set_piece(y,x)
+    def get_square_under_mouse(board):
+        mouse_pos = pygame.Vector2(pygame.mouse.get_pos())
+        x, y = [int(v // TILESIZE) for v in mouse_pos]
+        try: 
+            if x >= 0 and y >= 0: return (board.get_square(y,x), x, y)
+        except IndexError: pass
+        return None, None, None
+    
 
+    def draw_selector(self, screen, piece):
+        connected_pieces = self.get_connected_pieces(piece)
+        if connected_pieces != None:
+            for piece in connected_pieces:
+                rect = (piece.x * TILESIZE, piece.y * TILESIZE, TILESIZE, TILESIZE)
+                pygame.draw.rect(screen, (255, 0, 0, 50), rect, 2)  #FIXME fix color
+    
 
+    def draw_drag(self, screen, selected_piece, font):
+        if selected_piece:
+            piece, x, y = self.get_square_under_mouse()
+            if x != None:
+                rect = (x * TILESIZE, y * TILESIZE, TILESIZE, TILESIZE)
+                isValid = self.verify_position(x, y, selected_piece[0].x, selected_piece[0].y)
+                pygame.draw.rect(screen, (0, 255, 0, 50) if isValid else pygame.Color('red'), rect, 2)
+
+            s1 = font.render(selected_piece[0].type, True, pygame.Color(selected_piece[0].color))
+            s2 = font.render(selected_piece[0].type, True, pygame.Color('darkgrey'))
+            pos = pygame.Vector2(pygame.mouse.get_pos())
+            screen.blit(s2, s2.get_rect(center=pos + (1, 1)))
+            screen.blit(s1, s1.get_rect(center=pos))
+            selected_rect = pygame.Rect(selected_piece[1] * TILESIZE, selected_piece[2] * TILESIZE, TILESIZE, TILESIZE)
+            pygame.draw.line(screen, pygame.Color('red'), selected_rect.center, pos)
+            return (x, y)

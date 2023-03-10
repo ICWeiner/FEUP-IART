@@ -17,6 +17,7 @@ class Piece:
         screen.blit(s2, s2.get_rect(center=pos.center).move(1, 1))
         screen.blit(s1, s1.get_rect(center=pos.center))
 
+
     def set_piece(self, y, x):
         self.x = x
         self.y = y

@@ -1,6 +1,5 @@
 import pygame
 from board import Board
-from utils import get_square_under_mouse, draw_selector, draw_drag
 from macros import SCREEN_SIZE, TILESIZE, ROWS, COLS
 
 def main():
@@ -15,7 +14,7 @@ def main():
     selected_piece = None
     drop_pos = None
     while True:
-        piece, x, y = get_square_under_mouse(board)
+        piece, x, y = board.get_square_under_mouse()
         events = pygame.event.get()
         
         for e in events:
@@ -33,8 +32,8 @@ def main():
 
         screen.blit(board_surf, (0, 0))
         board.draw_pieces(screen, font, selected_piece)
-        draw_selector(screen, piece)
-        drop_pos = draw_drag(screen, board, selected_piece, font)
+        board.draw_selector(screen, piece)
+        drop_pos = board.draw_drag(screen, selected_piece, font)
 
         pygame.display.flip()
         clock.tick(60)
