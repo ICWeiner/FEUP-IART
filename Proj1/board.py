@@ -50,7 +50,7 @@ class Board:
 
 
     def verify_position(self, new_x, new_y, old_x, old_y):
-        return not (self.get_square(new_y, new_x) is not None
+        return new_x < 0 or new_x >= self.cols or new_y < 0 or new_y >= self.rows or not (self.get_square(new_y, new_x) is not None
             or abs(new_x - old_x) > 1 or abs(new_y - old_y) > 1
             or abs(new_x - old_x) == 1 and abs(new_y - old_y) == 1
             )
