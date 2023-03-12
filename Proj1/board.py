@@ -24,15 +24,6 @@ class Board:
         self.board[3][3] = Piece('red', '■', 3, 3)
 
 
-    def get_square(self, y, x):
-        return self.board[y][x]
-
-
-    def set_square(self, y, x, piece):
-        self.board[y][x] = piece
-        if piece != None: piece.set_piece(y,x)
-
-
     def create_board_surf(self):
         board_surf = pygame.Surface((TILESIZE * self.rows, TILESIZE * self.cols))
 
@@ -59,26 +50,48 @@ class Board:
 
 
     def verify_position(self, new_x, new_y, old_x, old_y):
-        if (self.get_square(new_y, new_x) is not None
+        return not (self.get_square(new_y, new_x) is not None
             or abs(new_x - old_x) > 1 or abs(new_y - old_y) > 1
             or abs(new_x - old_x) == 1 and abs(new_y - old_y) == 1
-            ):
-            return False
-
-        return True
+            )
 
 
     def set_position(self, drop_pos, selected_piece):
         if drop_pos:
             new_x, new_y = drop_pos
             piece, old_x, old_y = selected_piece
-            if self.verify_position(new_x, new_y, old_x, old_y):
-                self.set_square(old_y, old_x, None)
-                self.set_square(new_y, new_x, piece)
-                return True
+            connected_pieces = self.get_connected_pieces(piece)
+            old_connected_pieces = set(connected_pieces)
+
+            for connected_piece in connected_pieces:
+                self.set_square(connected_piece.y, connected_piece.x, None)
+
+            valid = True
+            for connected_piece in connected_pieces:
+                if not self.verify_position(connected_piece.x + new_x - old_x, connected_piece.y + new_y - old_y, connected_piece.x, connected_piece.y):
+                    for old_connected_piece in old_connected_pieces:
+                        self.set_square(old_connected_piece.y, old_connected_piece.x, old_connected_piece)
+                        valid = False
+                    break
+
+            if valid:
+                for connected_piece in connected_pieces:    
+                    self.set_square(connected_piece.y + new_y - old_y, connected_piece.x + new_x - old_x, connected_piece)
+
+            return True
         return False
+    
+
+    def get_square(self, y, x):
+        return self.board[y][x]
 
 
+    def set_square(self, y, x, piece):
+        self.board[y][x] = piece
+        if piece != None:
+            piece.set_piece(y,x)
+        
+                
     def get_connected_pieces(self, piece):
         if piece == None: return set()
         color = piece.color
@@ -103,17 +116,17 @@ class Board:
                     dfs(x, y + 1)
 
         dfs(piece.x, piece.y)
-        return list(connected)
+        return set(connected)
     
 
 ##################################
 
 
-    def get_square_under_mouse(board):
+    def get_square_under_mouse(self):
         mouse_pos = pygame.Vector2(pygame.mouse.get_pos())
         x, y = [int(v // TILESIZE) for v in mouse_pos]
         try: 
-            if x >= 0 and y >= 0: return (board.get_square(y,x), x, y)
+            if x >= 0 and y >= 0: return (self.get_square(y,x), x, y)
         except IndexError: pass
         return None, None, None
     
