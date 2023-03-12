@@ -24,15 +24,15 @@ class Board:
         self.board[3][3] = Piece('red', '■', 3, 3)
 
 
-    def create_board_surf(self):
+    def draw(self, screen):
         board_surf = pygame.Surface((TILESIZE * self.rows, TILESIZE * self.cols))
 
         for y in range(self.cols):
             for x in range(self.rows):
                 rect = pygame.Rect(x*TILESIZE, y*TILESIZE, TILESIZE, TILESIZE)
                 pygame.draw.rect(board_surf, pygame.Color('darkgrey'), rect, 1)
-        
-        return board_surf
+                
+        screen.blit(board_surf, (0, 0))
     
 
     def draw_pieces(self, screen, font, selected_piece):
