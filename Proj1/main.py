@@ -1,14 +1,14 @@
 import pygame
 from board import Board
 from menu import Menu
-from macros import SCREEN_SIZE, TILESIZE, ROWS, COLS
+from macros import *
 
 def main():
     pygame.init()
     font = pygame.font.SysFont('Arial', TILESIZE)
-    screen = pygame.display.set_mode((SCREEN_SIZE[0], SCREEN_SIZE[1]))
+    screen = pygame.display.set_mode((SCREEN_SIZE_LVL1[0], SCREEN_SIZE_LVL1[1]))
 
-    menu = Menu(SCREEN_SIZE)
+    menu = Menu(SCREEN_SIZE_LVL1)
 
     while True:
         events = pygame.event.get()
@@ -20,11 +20,18 @@ def main():
             if menu.isOpen:
                 selected_option = menu.handle_events(events)
                 if selected_option == 0:
-                    board = Board(ROWS,COLS)
+                    board = Board(LVL1_ROWS,LVL1_COLS)
+                    screen = pygame.display.set_mode((SCREEN_SIZE_LVL1[0], SCREEN_SIZE_LVL1[1]))
                     selected_piece = None
                     drop_pos = None
                     menu.setIsOpen(False)
                 elif selected_option == 1:
+                    screen = pygame.display.set_mode((SCREEN_SIZE_LVL2[0], SCREEN_SIZE_LVL2[1]))
+                    board = Board(LVL2_ROWS,LVL2_COLS)
+                    selected_piece = None
+                    drop_pos = None
+                    menu.setIsOpen(False)      
+                elif selected_option == 2:
                     return
                 selected_option = None
 
@@ -40,6 +47,8 @@ def main():
 
                 if e.type == pygame.KEYDOWN:
                     if e.key == pygame.K_ESCAPE:
+                        screen = pygame.display.set_mode((SCREEN_SIZE_LVL1[0], SCREEN_SIZE_LVL1[1]))
+                        menu.selected_option = None
                         menu.setIsOpen(True)
 
         screen.fill((0, 0, 0))
