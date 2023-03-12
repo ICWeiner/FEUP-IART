@@ -9,14 +9,8 @@ def main():
     screen = pygame.display.set_mode((SCREEN_SIZE[0], SCREEN_SIZE[1]))
 
     menu = Menu(SCREEN_SIZE)
-    
-    board = Board(ROWS,COLS)
-    
-    selected_piece = None
-    drop_pos = None
 
     while True:
-        piece, x, y = board.get_square_under_mouse()
         events = pygame.event.get()
 
         for e in events:
@@ -26,6 +20,9 @@ def main():
             if menu.isOpen:
                 selected_option = menu.handle_events(events)
                 if selected_option == 0:
+                    board = Board(ROWS,COLS)
+                    selected_piece = None
+                    drop_pos = None
                     menu.setIsOpen(False)
                 elif selected_option == 1:
                     return
@@ -49,6 +46,7 @@ def main():
         if menu.isOpen:
             menu.draw(screen)
         else:
+            piece, x, y = board.get_square_under_mouse()
             board.draw(screen)
             board.draw_pieces(screen, font, selected_piece)
             board.draw_selector(screen, piece)
