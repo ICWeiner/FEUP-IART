@@ -18,11 +18,12 @@ class Menu:
     def draw(self, screen):
         for i, label in enumerate(self.labels):
             color = (255, 255, 255) if i != self.selected_option else (255, 0, 0)
-            screen.blit(label, (self.x - 10 + 5, self.y + i * (self.font.get_height() + 10) + 5))
+            rect = label.get_rect(center=self.rects[i].center)
+            screen.blit(label, rect)
             pygame.draw.rect(screen, color, self.rects[i], 2)
             if self.rects[i].collidepoint(pygame.mouse.get_pos()):
                 color = (255, 0, 0)
-                screen.blit(label, (self.x - 10 + 5, self.y + i * (self.font.get_height() + 10) + 5))
+                screen.blit(label, rect)
                 pygame.draw.rect(screen, color, self.rects[i], 2)
 
 
