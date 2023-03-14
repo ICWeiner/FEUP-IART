@@ -32,7 +32,7 @@ class Board:
             for x in range(self.rows):
                 rect = pygame.Rect(x*TILESIZE, y*TILESIZE, TILESIZE, TILESIZE)
                 pygame.draw.rect(board_surf, pygame.Color('darkgrey'), rect, 1)
-                
+
         screen.blit(board_surf, (0, 0))
         
         #Moves
@@ -73,11 +73,11 @@ class Board:
 
 
     def set_position(self, drop_pos, selected_piece):
-        if not drop_pos: return False
+        if not drop_pos or not selected_piece: return False
         
         new_x, new_y = drop_pos
         piece, old_x, old_y = selected_piece
-        connected_pieces = self.get_connected_pieces(piece)
+        connected_pieces = piece.get_connected_pieces(self)
         old_connected_pieces = set(connected_pieces)
 
         for connected_piece in connected_pieces:
@@ -99,38 +99,48 @@ class Board:
 
 
     def set_square(self, y, x, piece):
-        #print(f"row: {y} col: {x}")
         self.board[y][x] = piece
         if piece != None:
             piece.set_piece(y,x)
-        
-                
-    def get_connected_pieces(self, piece):
-        if piece == None: return set()
-        color = piece.color
-        visited = set()
-        connected = set()
+            
 
-        def dfs(x, y):
-            if (x, y) in visited:
-                return
-            visited.add((x, y))
+    def goal_state(self): #testar melhor!
+        pieces = {}
+        for y in range(self.rows):
+            for x in range(self.cols):
+                piece = self.get_square(y, x)
+                if piece:
+                    if piece.color not in pieces:
+                        pieces[piece.color] = set()
+                    pieces[piece.color].add(piece)
 
-            if self.get_square(y, x) and self.get_square(y, x).color == color:
-                connected.add(self.get_square(y, x))
+        for color, pieces_set in pieces.items():
+            visited = set()
+            stack = [pieces_set.pop()]
+            while stack:
+                piece = stack.pop()
+                visited.add(piece)
+                for connected_piece in piece.get_connected_pieces(self):
+                    if connected_piece in pieces_set:
+                        stack.append(connected_piece)
+                        pieces_set.remove(connected_piece)
+            if pieces_set:
+                return False
+        return True
 
-                if x > 0:
-                    dfs(x - 1, y)
-                if x < self.cols - 1:
-                    dfs(x + 1, y)
-                if y > 0:
-                    dfs(x, y - 1)
-                if y < self.rows - 1:
-                    dfs(x, y + 1)
 
-        dfs(piece.x, piece.y)
-        return set(connected)
-    
+    def draw_Goal(self, screen, win):
+        font = pygame.font.SysFont('Arial', TILESIZE//2)
+        if win:
+            s1 = font.render("You Won! :)" , True, pygame.Color('white'))
+        else:
+            s1 = font.render("Game Over! :(" , True, pygame.Color('white')) #TODO add why (moves or time)
+
+        s1_rect = s1.get_rect()
+        s1_rect.center = screen.get_rect().center
+        screen.blit(s1, s1_rect)
+        pygame.display.update()     
+
 
 ##################################
 
@@ -145,8 +155,8 @@ class Board:
     
 
     def draw_selector(self, screen, piece):
-        connected_pieces = self.get_connected_pieces(piece)
-        if connected_pieces != None:
+        if piece != None:
+            connected_pieces = piece.get_connected_pieces(self)
             for piece in connected_pieces:
                 rect = (piece.x * TILESIZE, piece.y * TILESIZE, TILESIZE, TILESIZE)
                 pygame.draw.rect(screen, (255, 0, 0, 50), rect, 2)  #FIXME fix color
@@ -158,7 +168,7 @@ class Board:
             if x != None:
                 rect = (x * TILESIZE, y * TILESIZE, TILESIZE, TILESIZE)
                 isValid = self.verify_position(x, y, selected_piece[0].x, selected_piece[0].y)
-                pygame.draw.rect(screen, (0, 255, 0, 50) if isValid else pygame.Color('red'), rect, 2)
+                pygame.draw.rect(screen, (0, 255, 0, 50) if isValid else pygame.Color('red'), rect, 2)  #FIXME fix color
 
             s1 = font.render(selected_piece[0].type, True, pygame.Color(selected_piece[0].color))
             s2 = font.render(selected_piece[0].type, True, pygame.Color('darkgrey'))
@@ -168,3 +178,4 @@ class Board:
             selected_rect = pygame.Rect(selected_piece[1] * TILESIZE, selected_piece[2] * TILESIZE, TILESIZE, TILESIZE)
             pygame.draw.line(screen, pygame.Color('red'), selected_rect.center, pos)
             return (x, y)
+        return (None,None)

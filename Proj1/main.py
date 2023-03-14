@@ -62,6 +62,10 @@ def main():
         screen.fill((0, 0, 0))
         if menu.isOpen:
             menu.draw(screen)
+        elif board.goal_state():
+            board.draw_Goal(screen,True)
+        elif (count > 5 or time.time()-start_time > 30): #TODO change this later for different levels
+            board.draw_Goal(screen,False)
         else:
             board.draw(screen, count, start_time)
             piece, x, y = board.get_square_under_mouse()
