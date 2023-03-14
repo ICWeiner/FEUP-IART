@@ -2,6 +2,7 @@ import pygame
 from board import Board
 from menu import Menu
 from macros import *
+import time
 
 def main():
     pygame.init()
@@ -10,6 +11,7 @@ def main():
     screen = pygame.display.set_mode((SCREEN_SIZE_LVL1[0], SCREEN_SIZE_LVL1[1]))
     menu = Menu(SCREEN_SIZE_LVL1)
 
+    clock = pygame.time.Clock()
     while True:
         events = pygame.event.get()
 
@@ -25,6 +27,7 @@ def main():
                     selected_piece = None
                     drop_pos = None
                     count = 0
+                    start_time = time.time()
                     menu.isOpen = False
                 elif selected_option == 1:
                     screen = pygame.display.set_mode((SCREEN_SIZE_LVL2[0], SCREEN_SIZE_LVL2[1]))
@@ -32,6 +35,7 @@ def main():
                     selected_piece = None
                     drop_pos = None
                     count = 0
+                    start_time = time.time()
                     menu.isOpen = False     
                 elif selected_option == 2:
                     return
@@ -59,13 +63,14 @@ def main():
         if menu.isOpen:
             menu.draw(screen)
         else:
-            board.draw(screen, count)
+            board.draw(screen, count, start_time)
             piece, x, y = board.get_square_under_mouse()
             board.draw_pieces(screen, font, selected_piece)
             board.draw_selector(screen, piece)
             drop_pos = board.draw_drag(screen, selected_piece, font)
 
         pygame.display.flip()
+        clock.tick(60)
 
 if __name__ == '__main__':
     main()

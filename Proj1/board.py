@@ -1,6 +1,7 @@
 import pygame
 from piece import Piece
 from macros import TILESIZE
+import time
 
 class Board:
     def __init__(self, rows, cols):
@@ -24,7 +25,7 @@ class Board:
         self.board[3][3] = Piece('red', '■', 3, 3)
 
 
-    def draw(self, screen, count):
+    def draw(self, screen, count, start_time):
         board_surf = pygame.Surface((TILESIZE * self.rows, TILESIZE * self.cols))
 
         for y in range(self.cols):
@@ -33,12 +34,18 @@ class Board:
                 pygame.draw.rect(board_surf, pygame.Color('darkgrey'), rect, 1)
                 
         screen.blit(board_surf, (0, 0))
-
+        
+        #Moves
         font = pygame.font.SysFont('Arial', TILESIZE//3)
         s1 = font.render("Moves: " + str(count), True, pygame.Color('white'))
         s1_rect = s1.get_rect()
         s1_rect.bottomleft = (20, screen.get_height()-30)
         screen.blit(s1, s1_rect)
+
+        #Time
+        elapsed_time = time.time() - start_time
+        timer_text = font.render("Time: {:.2f}s".format(elapsed_time), True, (255, 255, 255))
+        screen.blit(timer_text, (screen.get_width() - timer_text.get_width() - 20, screen.get_height() - timer_text.get_height() - 30))
     
 
     def draw_pieces(self, screen, font, selected_piece):
