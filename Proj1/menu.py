@@ -40,6 +40,3 @@ class Menu:
                 self.selected_option = None
         return None
     
-
-    def setIsOpen(self, b):
-        self.isOpen = b

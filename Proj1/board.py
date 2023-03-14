@@ -24,7 +24,7 @@ class Board:
         self.board[3][3] = Piece('red', '■', 3, 3)
 
 
-    def draw(self, screen):
+    def draw(self, screen, count):
         board_surf = pygame.Surface((TILESIZE * self.rows, TILESIZE * self.cols))
 
         for y in range(self.cols):
@@ -33,6 +33,12 @@ class Board:
                 pygame.draw.rect(board_surf, pygame.Color('darkgrey'), rect, 1)
                 
         screen.blit(board_surf, (0, 0))
+
+        font = pygame.font.SysFont('Arial', TILESIZE//3)
+        s1 = font.render("Moves: " + str(count), True, pygame.Color('white'))
+        s1_rect = s1.get_rect()
+        s1_rect.bottomleft = (20, screen.get_height()-30)
+        screen.blit(s1, s1_rect)
     
 
     def draw_pieces(self, screen, font, selected_piece):
@@ -52,36 +58,33 @@ class Board:
     def verify_position(self, new_x, new_y, old_x, old_y):
         if new_x < 0 or new_x >= self.cols or new_y < 0 or new_y >= self.rows:
             return False
-        return not (self.get_square(new_y, new_x) is not None
+        return not (self.get_square(new_y, new_x) is not None 
+            or (new_x == old_x and new_y == old_y)
             or abs(new_x - old_x) > 1 or abs(new_y - old_y) > 1
             or abs(new_x - old_x) == 1 and abs(new_y - old_y) == 1
             )
 
 
     def set_position(self, drop_pos, selected_piece):
-        if drop_pos:
-            new_x, new_y = drop_pos
-            piece, old_x, old_y = selected_piece
-            connected_pieces = self.get_connected_pieces(piece)
-            old_connected_pieces = set(connected_pieces)
+        if not drop_pos: return False
+        
+        new_x, new_y = drop_pos
+        piece, old_x, old_y = selected_piece
+        connected_pieces = self.get_connected_pieces(piece)
+        old_connected_pieces = set(connected_pieces)
 
-            for connected_piece in connected_pieces:
-                self.set_square(connected_piece.y, connected_piece.x, None)
+        for connected_piece in connected_pieces:
+            self.set_square(connected_piece.y, connected_piece.x, None)
 
-            valid = True
-            for connected_piece in connected_pieces:
-                if not self.verify_position(connected_piece.x + new_x - old_x, connected_piece.y + new_y - old_y, connected_piece.x, connected_piece.y):
-                    for old_connected_piece in old_connected_pieces:
-                        self.set_square(old_connected_piece.y, old_connected_piece.x, old_connected_piece)
-                        valid = False
-                    break
+        for connected_piece in connected_pieces:
+            if not self.verify_position(connected_piece.x + new_x - old_x, connected_piece.y + new_y - old_y, connected_piece.x, connected_piece.y):
+                for old_connected_piece in old_connected_pieces:
+                    self.set_square(old_connected_piece.y, old_connected_piece.x, old_connected_piece)
+                return False
 
-            if valid:
-                for connected_piece in connected_pieces:    
-                    self.set_square(connected_piece.y + new_y - old_y, connected_piece.x + new_x - old_x, connected_piece)
-
-            return True
-        return False
+        for connected_piece in connected_pieces:    
+            self.set_square(connected_piece.y + new_y - old_y, connected_piece.x + new_x - old_x, connected_piece)
+        return True
     
 
     def get_square(self, y, x):

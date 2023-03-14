@@ -6,8 +6,8 @@ from macros import *
 def main():
     pygame.init()
     font = pygame.font.SysFont('Arial', TILESIZE)
+    pygame.display.set_caption('Cohesion')
     screen = pygame.display.set_mode((SCREEN_SIZE_LVL1[0], SCREEN_SIZE_LVL1[1]))
-
     menu = Menu(SCREEN_SIZE_LVL1)
 
     while True:
@@ -24,13 +24,15 @@ def main():
                     screen = pygame.display.set_mode((SCREEN_SIZE_LVL1[0], SCREEN_SIZE_LVL1[1]))
                     selected_piece = None
                     drop_pos = None
-                    menu.setIsOpen(False)
+                    count = 0
+                    menu.isOpen = False
                 elif selected_option == 1:
                     screen = pygame.display.set_mode((SCREEN_SIZE_LVL2[0], SCREEN_SIZE_LVL2[1]))
                     board = Board(LVL2_ROWS,LVL2_COLS)
                     selected_piece = None
                     drop_pos = None
-                    menu.setIsOpen(False)      
+                    count = 0
+                    menu.isOpen = False     
                 elif selected_option == 2:
                     return
                 selected_option = None
@@ -41,7 +43,9 @@ def main():
                         selected_piece = piece, x, y
 
                 if e.type == pygame.MOUSEBUTTONUP:
-                    board.set_position(drop_pos, selected_piece)
+                    set = board.set_position(drop_pos, selected_piece)
+                    if set:
+                        count += 1
                     selected_piece = None
                     drop_pos = None
 
@@ -49,14 +53,14 @@ def main():
                     if e.key == pygame.K_ESCAPE:
                         screen = pygame.display.set_mode((SCREEN_SIZE_LVL1[0], SCREEN_SIZE_LVL1[1]))
                         menu.selected_option = None
-                        menu.setIsOpen(True)
+                        menu.isOpen = True
 
         screen.fill((0, 0, 0))
         if menu.isOpen:
             menu.draw(screen)
         else:
+            board.draw(screen, count)
             piece, x, y = board.get_square_under_mouse()
-            board.draw(screen)
             board.draw_pieces(screen, font, selected_piece)
             board.draw_selector(screen, piece)
             drop_pos = board.draw_drag(screen, selected_piece, font)
