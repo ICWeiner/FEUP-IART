@@ -62,6 +62,15 @@ class Board:
                     piece.draw(screen, font, selected)
 
 
+    def __str__(self):
+        res = ""
+        for y in range(self.rows):
+            for x in range(self.cols):
+                res += str(self.board[y][x]) + " "
+            res += "\n"
+        return res
+    
+    
     def verify_position(self, new_x, new_y, old_x, old_y):
         if new_x < 0 or new_x >= self.cols or new_y < 0 or new_y >= self.rows:
             return False
@@ -104,6 +113,9 @@ class Board:
             piece.set_piece(y,x)
             
 
+################################## Game State
+
+
     def goal_state(self): #testar melhor!
         pieces = {}
         for y in range(self.rows):
@@ -139,7 +151,7 @@ class Board:
         s1_rect = s1.get_rect()
         s1_rect.center = screen.get_rect().center
         screen.blit(s1, s1_rect)
-        pygame.display.update()     
+        pygame.display.update()
 
 
 ##################################

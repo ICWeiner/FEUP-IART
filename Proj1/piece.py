@@ -10,6 +10,10 @@ class Piece:
         self.x = x
 
 
+    def __str__(self):
+        return "(" + str(self.y) + "," + str(self.x) + "," + str(self.color) + ")"
+    
+
     def draw(self, screen, font, selected):
         s1 = font.render(self.type, True, pygame.Color('darkgrey' if selected else self.color))
         s2 = font.render(self.type, True, pygame.Color('darkgrey'))

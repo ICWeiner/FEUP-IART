@@ -1,8 +1,35 @@
 import pygame
 from board import Board
+from game_state import GameState
 from menu import Menu
 from macros import *
 import time
+
+
+def bfs(problem):
+    queue = [problem]
+    visited = set() # to not visit the same state twice
+
+    while queue:
+        state = queue.pop(0)    # get the first state from the queue
+        visited.add(state)  # add the state to the visited set
+        if state.board.goal_state():
+            return state.move_history
+
+        for child in state.children():
+            if child not in visited:
+                print(child.board)
+                # add the child state to the queue
+                queue.append(child)
+    return []
+
+
+def print_sequence(sequence):
+    print("Steps:", len(sequence))
+    # prints the sequence of states
+    for state in sequence:
+        print(state.board)
+
 
 def main():
     pygame.init()
@@ -22,6 +49,7 @@ def main():
             if menu.isOpen:
                 selected_option = menu.handle_events(events)
                 if selected_option == 0:
+                    print_sequence(bfs(GameState(Board(LVL1_ROWS,LVL1_COLS))))
                     board = Board(LVL1_ROWS,LVL1_COLS)
                     screen = pygame.display.set_mode((SCREEN_SIZE_LVL1[0], SCREEN_SIZE_LVL1[1]))
                     selected_piece = None
@@ -64,8 +92,8 @@ def main():
             menu.draw(screen)
         elif board.goal_state():
             board.draw_Goal(screen,True)
-        elif (count > 5 or time.time()-start_time > 30): #TODO change this later for different levels
-            board.draw_Goal(screen,False)
+        #elif (count > 5 or time.time()-start_time > 30): #TODO change this later for different levels
+            #board.draw_Goal(screen,False)
         else:
             board.draw(screen, count, start_time)
             piece, x, y = board.get_square_under_mouse()
