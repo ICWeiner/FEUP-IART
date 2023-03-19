@@ -18,7 +18,7 @@ def bfs(problem):
 
         for child in state.children():
             if child not in visited:
-                print(child.board)
+                #print(child.board)
                 # add the child state to the queue
                 queue.append(child)
     return None
@@ -26,7 +26,8 @@ def bfs(problem):
 
 def print_sequence(sequence):
     if sequence:
-        print("Steps:", len(sequence)-1)
+        print("Steps:", len(sequence))
+        print()
         for state in sequence:
             print(state)
             print()

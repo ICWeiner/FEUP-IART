@@ -8,11 +8,8 @@ class GameState:
         self.selected_piece = self.find_piece()
         self.x = self.selected_piece[1]
         self.y = self.selected_piece[2]
-        self.move_history = [] + move_history + [deepcopy(self.board)]
-
-
-    def __eq__(self, other):
-        return self.board == other.board
+        #self.move_history = [] + move_history + [deepcopy(self.board)]
+        self.move_history = [] + move_history
 
 
     def __hash__(self):
@@ -42,7 +39,6 @@ class GameState:
             state = GameState(self.board, self.move_history)
             move_made = func(state)
             if move_made:
-                state.move_history.append(move_made)
                 return state
             else:
                 return None
@@ -55,9 +51,10 @@ class GameState:
         if not self.selected_piece[0]: return False
         moved = self.board.set_position((self.x, self.y-1), self.selected_piece)
         if moved:
+            self.move_history.append("Piece at coordinates x:" + str(self.x) + " y:" + str(self.y) +" moved up" )
             self.y -= 1
             self.selected_piece = (self.board.get_square(self.y,self.x),self.x,self.y)
-        print("Up " + str(moved))
+        #print("Up " + str(moved))
         return moved
 
 
@@ -66,9 +63,10 @@ class GameState:
         if not self.selected_piece[0]: return False
         moved = self.board.set_position((self.x, self.y+1), self.selected_piece)
         if moved:
+            self.move_history.append("Piece at coordinates x:" + str(self.x) + " y:" + str(self.y) +" moved down" )
             self.y += 1
             self.selected_piece = (self.board.get_square(self.y,self.x),self.x,self.y)
-        print("Down " + str(moved))
+        #print("Down " + str(moved))
         return moved
 
 
@@ -77,9 +75,10 @@ class GameState:
         if not self.selected_piece[0]: return False
         moved = self.board.set_position((self.x-1, self.y), self.selected_piece)
         if moved:
+            self.move_history.append("Piece at coordinates x:" + str(self.x) + " y:" + str(self.y) +" moved left" )
             self.x -= 1
             self.selected_piece = (self.board.get_square(self.y,self.x),self.x,self.y)
-        print("Left " + str(moved))
+        #print("Left " + str(moved))
         return moved
 
 
@@ -88,9 +87,10 @@ class GameState:
         if not self.selected_piece[0]: return False
         moved = self.board.set_position((self.x+1, self.y), self.selected_piece)
         if moved:
+            self.move_history.append("Piece at coordinates x:" + str(self.x) + " y:" + str(self.y) +" moved right" )
             self.x += 1
             self.selected_piece = (self.board.get_square(self.y,self.x),self.x,self.y)
-        print("Right " + str(moved))
+        #print("Right " + str(moved))
         return moved
     
     
