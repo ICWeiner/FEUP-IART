@@ -8,22 +8,35 @@ class Board:
         self.rows = rows
         self.cols = cols
 
+        self.pieces = {}
+
         self.board = []
         for y in range(self.cols):
             self.board.append([])
             for x in range(self.rows):
                 self.board[y].append(None)
 
-        self.board[0][0] = Piece('red', '■', 0, 0)
-        self.board[1][0] = Piece('red', '■', 1, 0)
-        self.board[1][1] = Piece('red', '■', 1, 1)
-        self.board[0][1] = Piece('green', '■', 0, 1)
-        self.board[0][3] = Piece('yellow', '■', 0, 3)
-        self.board[2][2] = Piece('green', '■', 2, 2)
-        self.board[2][3] = Piece('green', '■', 2, 3)
-        self.board[3][2] = Piece('green', '■', 3, 2)
-        #self.board[3][3] = Piece('red', '■', 3, 3)
-    
+        #self.add_piece('red',3,3)
+        self.add_piece('red',0,0)
+        #self.add_piece('red',1,0)
+        self.add_piece('red',1,2)
+        self.add_piece('green',0,1)
+        self.add_piece('yellow',0,3)
+        self.add_piece('green',2,2)
+        self.add_piece('green',2,3)
+        self.add_piece('green',3,2)
+
+
+    def add_piece(self,color,x,y):
+        piece = Piece(color,x,y)
+        self.board[x][y] = piece
+        if piece:
+            if piece.color not in self.pieces:
+                #self.pieces[piece.color] = set()
+                self.pieces[piece.color]=1
+            else:
+                self.pieces[piece.color]+=1
+
 
     def draw(self, screen, count, start_time):
         board_surf = pygame.Surface((TILESIZE * self.rows, TILESIZE * self.cols))
@@ -115,7 +128,6 @@ class Board:
 
 ################################## Goal
 
-
     def goal_state(self): #testar melhor!
         pieces = {}
         for y in range(self.rows):
@@ -182,8 +194,8 @@ class Board:
                 isValid = self.verify_position(x, y, selected_piece[0].x, selected_piece[0].y)
                 pygame.draw.rect(screen, (0, 255, 0, 50) if isValid else pygame.Color('red'), rect, 2)  #FIXME fix color
 
-            s1 = font.render(selected_piece[0].type, True, pygame.Color(selected_piece[0].color))
-            s2 = font.render(selected_piece[0].type, True, pygame.Color('darkgrey'))
+            s1 = font.render('■', True, pygame.Color(selected_piece[0].color))
+            s2 = font.render('■', True, pygame.Color('darkgrey'))
             pos = pygame.Vector2(pygame.mouse.get_pos())
             screen.blit(s2, s2.get_rect(center=pos + (1, 1)))
             screen.blit(s1, s1.get_rect(center=pos))

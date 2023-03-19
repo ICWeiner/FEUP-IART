@@ -29,8 +29,10 @@ class GameState:
     def find_piece(self):
         for y in range(self.board.cols):
             for x in range(self.board.rows):
-                if self.board.get_square(y,x):
-                    return (self.board.get_square(y,x),x,y)
+                piece = self.board.get_square(y,x)
+                if piece:
+                    if len(piece.get_connected_pieces(self.board)) < self.board.pieces[piece.color]:
+                        return (self.board.get_square(y,x),x,y)
         return (None,None,None)
     
 
