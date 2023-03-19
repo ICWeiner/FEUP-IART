@@ -22,8 +22,8 @@ class Board:
         self.board[2][2] = Piece('green', '■', 2, 2)
         self.board[2][3] = Piece('green', '■', 2, 3)
         self.board[3][2] = Piece('green', '■', 3, 2)
-        self.board[3][3] = Piece('red', '■', 3, 3)
-
+        #self.board[3][3] = Piece('red', '■', 3, 3)
+    
 
     def draw(self, screen, count, start_time):
         board_surf = pygame.Surface((TILESIZE * self.rows, TILESIZE * self.cols))
@@ -113,7 +113,7 @@ class Board:
             piece.set_piece(y,x)
             
 
-################################## Game State
+################################## Goal
 
 
     def goal_state(self): #testar melhor!

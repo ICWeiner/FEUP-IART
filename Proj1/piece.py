@@ -11,7 +11,7 @@ class Piece:
 
 
     def __str__(self):
-        return "(" + str(self.y) + "," + str(self.x) + "," + str(self.color) + ")"
+        return str(self.color)
     
 
     def draw(self, screen, font, selected):

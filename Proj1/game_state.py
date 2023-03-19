@@ -3,12 +3,11 @@ from copy import deepcopy
 
 class GameState:
 
-    def __init__(self, board, move_history=[]):
+    def __init__(self, board, move_history = []):
         self.board = deepcopy(board)
-        self.piece = self.board.get_square(0,0)
-        self.x = 0
-        self.y = 0
-        self.selected_piece = (self.piece, self.x, self.y)
+        self.selected_piece = self.find_piece()
+        self.x = self.selected_piece[1]
+        self.y = self.selected_piece[2]
         self.move_history = [] + move_history + [deepcopy(self.board)]
 
 
@@ -29,6 +28,14 @@ class GameState:
                 children.append(child)
         return children
 
+
+    def find_piece(self):
+        for y in range(self.board.cols):
+            for x in range(self.board.rows):
+                if self.board.get_square(y,x):
+                    return (self.board.get_square(y,x),x,y)
+        return (None,None,None)
+    
 
     def move(func):
         def wrapper(self):
@@ -68,9 +75,9 @@ class GameState:
     @move
     def moveLeft(self):
         if not self.selected_piece[0]: return False
-        moved = self.board.set_position((self.x+1, self.y), self.selected_piece)
+        moved = self.board.set_position((self.x-1, self.y), self.selected_piece)
         if moved:
-            self.x += 1
+            self.x -= 1
             self.selected_piece = (self.board.get_square(self.y,self.x),self.x,self.y)
         print("Left " + str(moved))
         return moved
@@ -79,16 +86,11 @@ class GameState:
     @move
     def moveRight(self):
         if not self.selected_piece[0]: return False
-        moved = self.board.set_position((self.x-1, self.y), self.selected_piece)
+        moved = self.board.set_position((self.x+1, self.y), self.selected_piece)
         if moved:
-            self.x -= 1
+            self.x += 1
             self.selected_piece = (self.board.get_square(self.y,self.x),self.x,self.y)
         print("Right " + str(moved))
         return moved
-
-
-    #TODO Colocar goal_state function aqui
-    # ...
-
-
+    
     

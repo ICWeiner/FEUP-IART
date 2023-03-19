@@ -21,14 +21,17 @@ def bfs(problem):
                 print(child.board)
                 # add the child state to the queue
                 queue.append(child)
-    return []
+    return None
 
 
 def print_sequence(sequence):
-    print("Steps:", len(sequence))
-    # prints the sequence of states
-    for state in sequence:
-        print(state.board)
+    if sequence:
+        print("Steps:", len(sequence)-1)
+        for state in sequence:
+            print(state)
+            print()
+    else:
+        print("No solution found")
 
 
 def main():
@@ -49,8 +52,8 @@ def main():
             if menu.isOpen:
                 selected_option = menu.handle_events(events)
                 if selected_option == 0:
-                    print_sequence(bfs(GameState(Board(LVL1_ROWS,LVL1_COLS))))
                     board = Board(LVL1_ROWS,LVL1_COLS)
+                    print_sequence(bfs(GameState(board)))
                     screen = pygame.display.set_mode((SCREEN_SIZE_LVL1[0], SCREEN_SIZE_LVL1[1]))
                     selected_piece = None
                     drop_pos = None
