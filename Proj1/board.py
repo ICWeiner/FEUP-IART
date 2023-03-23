@@ -18,8 +18,8 @@ class Board:
 
         #self.add_piece('red',3,3)
         self.add_piece('red',0,0)
-        #self.add_piece('red',1,0)
-        self.add_piece('red',1,2)
+        self.add_piece('red',1,0)
+        self.add_piece('red',1,1)
         self.add_piece('green',0,1)
         self.add_piece('yellow',0,3)
         self.add_piece('green',2,2)

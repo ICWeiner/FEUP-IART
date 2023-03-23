@@ -19,10 +19,14 @@ class GameState:
     def children(self):
         functions = [self.moveUp, self.moveDown, self.moveLeft, self.moveRight]
         children = []
-        for func in functions:
-            child = func()
-            if child:
-                children.append(child)
+        for y in range(self.board.cols):
+            for x in range(self.board.rows):
+                piece = self.board.get_square(y,x)
+                if piece:
+                    for func in functions:
+                        child = func()
+                        if child:#TODO: Verificar se movimento é possivel
+                            children.append(child)
         return children
 
 

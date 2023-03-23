@@ -21,7 +21,7 @@ def bfs(problem):
                 #print(child.board)
                 # add the child state to the queue
                 queue.append(child)
-    return None
+    return None 
 
 
 def print_sequence(sequence):
