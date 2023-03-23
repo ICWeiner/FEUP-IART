@@ -8,9 +8,13 @@ import time
 
 def bfs(problem):
     queue = [problem]
+    print(type(queue))
     visited = set() # to not visit the same state twice
+    
 
     while queue:
+        print("tamanho da fila")
+        print(len(queue))
         state = queue.pop(0)    # get the first state from the queue
         visited.add(state)  # add the state to the visited set
         if state.board.goal_state():
@@ -21,6 +25,8 @@ def bfs(problem):
                 #print(child.board)
                 # add the child state to the queue
                 queue.append(child)
+            else:
+                print("HELLO1")
     return None 
 
 

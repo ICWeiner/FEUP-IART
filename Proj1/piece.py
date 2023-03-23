@@ -12,6 +12,15 @@ class Piece:
     def __str__(self):
         return str(self.color)
     
+    def __eq__(self, other):
+        if not other:
+            return False
+        print( ( self.color == other.color and self.y == other.y and self.x == other.x) )
+        return self.color == other.color and self.y == other.y and self.x == other.x
+
+    def __hash__(self):
+        return hash((str(self.color) + str(self.y) + str(self.x)))
+    
 
     def draw(self, screen, font, selected):
         s1 = font.render('■', True, pygame.Color('darkgrey' if selected else self.color))

@@ -12,6 +12,10 @@ class GameState:
         self.move_history = [] + move_history
 
 
+
+    def __eq__(self, other):
+        return self.board == other.board
+
     def __hash__(self):
         return hash((str(self.board)))
     
@@ -21,14 +25,20 @@ class GameState:
         children = []
         for y in range(self.board.cols):
             for x in range(self.board.rows):
-                piece = self.board.get_square(y,x)
-                if piece:
+                self.selected_piece = self.board.get_square(y,x)
+                if self.selected_piece:
+                    self.x = self.selected_piece.x
+                    self.y = self.selected_piece.y
                     for func in functions:
                         child = func()
                         if child:#TODO: Verificar se movimento é possivel
                             children.append(child)
+                self.selected_piece , self.x ,self.y = (None,None,None)
+        #print("hello")
+        #print(len(children))
         return children
 
+    
 
     def find_piece(self):
         for y in range(self.board.cols):
