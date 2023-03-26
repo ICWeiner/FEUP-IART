@@ -7,15 +7,15 @@ class Piece:
         self.color = color
         self.y = y
         self.x = x
+        self.connected = True
 
 
     def __str__(self):
-        return str(self.color)
+        return "Piece has color:" + str(self.color) +  " Y:" + str(self.y) + "X:" + str(self.x) 
     
     def __eq__(self, other):
         if not other:
             return False
-        print( ( self.color == other.color and self.y == other.y and self.x == other.x) )
         return self.color == other.color and self.y == other.y and self.x == other.x
 
     def __hash__(self):
@@ -58,3 +58,18 @@ class Piece:
 
         dfs(self.x, self.y)
         return set(connected)
+    
+    
+    '''
+    def get_neighbors(self, board):
+        # Returns a list of neighboring pieces on the game board
+        neighbors = []
+        directions = [(0, 1), (0, -1), (1, 0), (-1, 0)]
+        for dx, dy in directions:
+            new_x, new_y = self.x + dx, self.y + dy
+            if 0 <= new_x < len(board) and 0 <= new_y < len(board[0]):
+                piece = board[new_x][new_y]
+                if piece is not None and piece.color == self.color:
+                    neighbors.append(piece)
+        return neighbors
+    '''

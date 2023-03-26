@@ -25,11 +25,38 @@ class Board:
         self.add_piece('green',2,2)
         self.add_piece('green',2,3)
         self.add_piece('green',3,2)
+        #self.add_piece('red',3,0)
+
 
     def __eq__(self, other):
-            return self.board == other.board
+        if isinstance(other, Board):
+            return self.rows == other.rows and self.cols == other.cols and self.board == other.board
+        return False
+    
+    def __hash__(self):
+        rows = [tuple(row) for row in self.board]
+        return hash(tuple(rows))
+    
+    def __str__(self):
+        res = ""
+        for y in range(self.rows):
+            for x in range(self.cols):
+                res += str(self.board[y][x]) + " "
+            res += "\n"
+        return res
+    
+    '''
+    def __str__ (self):
+        text=""
+        for y in range(self.board.cols):
+            for x in range(self.board.rows):
+                piece =self.board[y][x]
+                if piece:
+                    text.join(piece)
+        return text
+    '''
 
-
+    
     def add_piece(self,color,x,y):
         piece = Piece(color,x,y)
         self.board[x][y] = piece
@@ -76,15 +103,6 @@ class Board:
                 if piece:
                     selected = x == sx and y == sy
                     piece.draw(screen, font, selected)
-
-
-    def __str__(self):
-        res = ""
-        for y in range(self.rows):
-            for x in range(self.cols):
-                res += str(self.board[y][x]) + " "
-            res += "\n"
-        return res
     
     
     def verify_position(self, new_x, new_y, old_x, old_y):
@@ -131,7 +149,7 @@ class Board:
 
 ################################## Goal
 
-    def goal_state(self): #testar melhor!
+    def goal_state(self):
         pieces = {}
         for y in range(self.rows):
             for x in range(self.cols):

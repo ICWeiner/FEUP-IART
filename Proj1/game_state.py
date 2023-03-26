@@ -1,112 +1,152 @@
-from board import Board
 from copy import deepcopy
 
 class GameState:
 
-    def __init__(self, board, move_history = []):
+    def __init__(self, board, move_history = [], depth = 0, start_pos=(0,0), cost_so_far=0): #start_pos should match coordinates of an actual piece or else 💀
         self.board = deepcopy(board)
-        self.selected_piece = self.find_piece()
-        self.x = self.selected_piece[1]
-        self.y = self.selected_piece[2]
+        self.depth = depth
         #self.move_history = [] + move_history + [deepcopy(self.board)]
         self.move_history = [] + move_history
+        self.cost_so_far = cost_so_far
+        self.start_pos = start_pos
+        self.id = id(self)
+   
 
+    def manhattan_distance_heuristic(self):
+        # Find the nearest unconnected piece of the same color 
+        nearest_dist = float('inf')
+        for j in range(self.board.cols):
+            for i in range(self.board.rows):
+                piece = self.board.get_square(j,i)
+                if piece is not None and not piece.connected:
+                    dist = abs(i - piece.row) + abs(j - piece.col)
+                    if dist < nearest_dist:
+                        nearest_dist = dist
+        return nearest_dist
+    
 
+    def disconnected_squares_heuristic(state):
+        board = state.board
+        goal_state = board.goal_state()
+        if state == goal_state:
+            return 0
+        
+        num_disconnected_squares = 0
+        total_distance = 0
+        
+        for row in range(board.size):
+            for col in range(board.size):
+                piece = board.get_square(row, col)
+                if not piece:
+                    continue
+                if piece.color != goal_state.board.get_square(row, col).color:
+                    num_disconnected_squares += 1
+                    total_distance += state.manhattan_distance((row, col), goal_state.get_color_goal(piece.color))
+                    
+        return num_disconnected_squares * board.size + total_distance
+    
+
+    def get_cost_so_far(self, pos):
+        return self.cost_so_far.get(pos, float('inf'))  # Return infinity if pos has not been visited yet
+
+    def set_cost_so_far(self, pos, cost):
+        self.cost_so_far[pos] = cost
+
+    def __lt__(self, other):
+        return self.cost_so_far < other.cost_so_far
 
     def __eq__(self, other):
-        return self.board == other.board
-
-    def __hash__(self):
-        return hash((str(self.board)))
+        return self.board == other.board and self.start_pos == other.start_pos
     
+    def __hash__(self):
+        return hash((self.board, self.start_pos))
+    
+    def __str__(self):
+        return self.board
+
 
     def children(self):
         functions = [self.moveUp, self.moveDown, self.moveLeft, self.moveRight]
         children = []
-        for y in range(self.board.cols):
-            for x in range(self.board.rows):
-                self.selected_piece = self.board.get_square(y,x)
-                if self.selected_piece:
-                    self.x = self.selected_piece.x
-                    self.y = self.selected_piece.y
-                    for func in functions:
-                        child = func()
-                        if child:#TODO: Verificar se movimento é possivel
-                            children.append(child)
-                self.selected_piece , self.x ,self.y = (None,None,None)
-        #print("hello")
-        #print(len(children))
+        for func in functions:
+            child = func()
+            if child is not None:
+                child.depth = self.depth + 1
+                children.append(child)
         return children
-
     
 
-    def find_piece(self):
+    def find_pieces(self):
+        pieces = []
         for y in range(self.board.cols):
             for x in range(self.board.rows):
                 piece = self.board.get_square(y,x)
                 if piece:
-                    if len(piece.get_connected_pieces(self.board)) < self.board.pieces[piece.color]:
-                        return (self.board.get_square(y,x),x,y)
-        return (None,None,None)
+                    coords = (piece.x,piece.y)
+                    pieces.append(coords)
+        return pieces
     
-
+    
     def move(func):
         def wrapper(self):
-            state = GameState(self.board, self.move_history)
-            move_made = func(state)
-            if move_made:
-                return state
-            else:
-                return None
+            pieces = self.find_pieces()
+            for piece_coords in pieces:
+                state = GameState(self.board, self.move_history, self.depth+1, piece_coords)
+                move_made = func(state)
+                if move_made:
+                    return state
+            return None
         return wrapper
     
 
     #Operators
     @move
     def moveUp(self):
-        if not self.selected_piece[0]: return False
-        moved = self.board.set_position((self.x, self.y-1), self.selected_piece)
+        selected_piece = self.board.get_square(self.start_pos[1],self.start_pos[0])
+        if not selected_piece: return False
+        x, y = self.start_pos
+        moved = self.board.set_position((x, y-1), (selected_piece,x,y))
         if moved:
-            self.move_history.append("Piece at coordinates x:" + str(self.x) + " y:" + str(self.y) +" moved up" )
-            self.y -= 1
-            self.selected_piece = (self.board.get_square(self.y,self.x),self.x,self.y)
-        #print("Up " + str(moved))
+            self.move_history.append("Piece at coordinates x:" + str(x) + " y:" + str(y) +" moved up" )
+            self.start_pos = (self.start_pos[0],self.start_pos[1] - 1)
+        print("Up " + str(moved))
         return moved
 
 
     @move
     def moveDown(self):
-        if not self.selected_piece[0]: return False
-        moved = self.board.set_position((self.x, self.y+1), self.selected_piece)
+        selected_piece = self.board.get_square(self.start_pos[1],self.start_pos[0])
+        if not selected_piece: return False
+        x, y = self.start_pos
+        moved = self.board.set_position((x, y+1), (selected_piece,x, y))
         if moved:
-            self.move_history.append("Piece at coordinates x:" + str(self.x) + " y:" + str(self.y) +" moved down" )
-            self.y += 1
-            self.selected_piece = (self.board.get_square(self.y,self.x),self.x,self.y)
-        #print("Down " + str(moved))
+            self.move_history.append("Piece at coordinates x:" + str(x) + " y:" + str(y) +" moved down" )
+            self.start_pos = (self.start_pos[0],self.start_pos[1] + 1)
+        print("Down " + str(moved))
         return moved
 
 
     @move
     def moveLeft(self):
-        if not self.selected_piece[0]: return False
-        moved = self.board.set_position((self.x-1, self.y), self.selected_piece)
+        selected_piece = self.board.get_square(self.start_pos[1],self.start_pos[0])
+        if not selected_piece: return False
+        x, y = self.start_pos
+        moved = self.board.set_position((x - 1, y), (selected_piece,x,y))
         if moved:
-            self.move_history.append("Piece at coordinates x:" + str(self.x) + " y:" + str(self.y) +" moved left" )
-            self.x -= 1
-            self.selected_piece = (self.board.get_square(self.y,self.x),self.x,self.y)
-        #print("Left " + str(moved))
+            self.move_history.append("Piece at coordinates x:" + str(x) + " y:" + str(y) +" moved left" )
+            self.start_pos = (self.start_pos[0] - 1,self.start_pos[1])
+        print("Left " + str(moved))
         return moved
 
 
     @move
     def moveRight(self):
-        if not self.selected_piece[0]: return False
-        moved = self.board.set_position((self.x+1, self.y), self.selected_piece)
+        selected_piece = self.board.get_square(self.start_pos[1],self.start_pos[0])
+        if not selected_piece: return False
+        x, y = self.start_pos
+        moved = self.board.set_position((x+1, y), (selected_piece,x, y))
         if moved:
-            self.move_history.append("Piece at coordinates x:" + str(self.x) + " y:" + str(self.y) +" moved right" )
-            self.x += 1
-            self.selected_piece = (self.board.get_square(self.y,self.x),self.x,self.y)
-        #print("Right " + str(moved))
+            self.move_history.append("Piece at coordinates x:" + str(x) + " y:" + str(y) +" moved right" )
+            self.start_pos = (self.start_pos[0] + 1,self.start_pos[1])
+        print("Right " + str(moved))
         return moved
-    
-    
