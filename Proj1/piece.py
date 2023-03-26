@@ -11,12 +11,11 @@ class Piece:
 
 
     def __str__(self):
-        return  "Piece has color:" + str(self.color) +  " Y:" + str(self.y) + "X:" + str(self.x) 
+        return "Piece has color:" + str(self.color) +  " Y:" + str(self.y) + "X:" + str(self.x) 
     
     def __eq__(self, other):
         if not other:
             return False
-        #print( ( self.color == other.color and self.y == other.y and self.x == other.x) )
         return self.color == other.color and self.y == other.y and self.x == other.x
 
     def __hash__(self):
@@ -36,7 +35,7 @@ class Piece:
         self.y = y
 
 
-    def get_connected_pieces(self, board): ##GET ALL CONNECTED PIECES
+    def get_connected_pieces(self, board):
         visited = set()
         connected = set()
 
@@ -60,7 +59,8 @@ class Piece:
         dfs(self.x, self.y)
         return set(connected)
     
-
+    
+    '''
     def get_neighbors(self, board):
         # Returns a list of neighboring pieces on the game board
         neighbors = []
@@ -72,27 +72,4 @@ class Piece:
                 if piece is not None and piece.color == self.color:
                     neighbors.append(piece)
         return neighbors
-
-    def is_connected(self, board):
-        # check if the piece is already marked as connected
-        if self.connected:
-            return True
-        # create a set to keep track of visited pieces
-        visited = set()
-        # perform a depth-first search to find a connected piece
-        def dfs(piece):
-            if piece in visited:
-                return False
-            visited.add(piece)
-            if piece.connected:
-                return True
-            for neighbor in piece.get_neighbors(board):
-                if dfs(neighbor):
-                    return True
-            return False
-        # start the depth-first search from the current piece
-        result = dfs(self)
-        # mark the piece as connected if a connected piece is found
-        if result:
-            self.connected = True
-        return result
+    '''
