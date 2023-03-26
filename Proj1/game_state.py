@@ -4,7 +4,7 @@ from os import sys
 
 class GameState:
 
-    def __init__(self, board, move_history = [],depth = 0):
+    def __init__(self, board, move_history = [],depth = 0,start_pos=(0,0)): #start_pos should match coordinates of an actual piece or else 💀
         self.board = deepcopy(board)
         self.selected_piece = self.find_piece()
         self.depth = depth
@@ -12,13 +12,32 @@ class GameState:
         self.y = self.selected_piece.y
         #self.move_history = [] + move_history + [deepcopy(self.board)]
         self.move_history = [] + move_history
+        self.start_pos = start_pos
+        self.cost_so_far = {start_pos: 0}
+
+    def manhattan_distance_heuristic(self):
+    # Find the nearest unconnected piece of the same color and shape
+        nearest_dist = float('inf')
+        for j in range(self.board.cols):
+            for i in range(self.board.rows):
+                if self.board.board[i][j] is not None and self.board.board[i][j].color == self.selected_piece.color and not self.board.board[i][j].connected:
+                    dist = abs(i - self.board.board[i][j].row) + abs(j - self.board.board[i][j].col)
+                    if dist < nearest_dist:
+                        nearest_dist = dist
+        return nearest_dist
+    
+    def get_cost_so_far(self, pos):
+        return self.cost_so_far.get(pos, float('inf'))  # Return infinity if pos has not been visited yet
+
+    def set_cost_so_far(self, pos, cost):
+        self.cost_so_far[pos] = cost
 
 
     def __eq__(self, other):
-        return self.board == other.board
-
+        return isinstance(other, GameState) and self.board == other.board and self.selected_piece == other.selected_piece
+    
     def __hash__(self):
-        return hash((str(self.board)))
+        return hash((self.board, self.selected_piece))
     
     def __str__(self):
         return self.board
@@ -63,10 +82,12 @@ class GameState:
 
     def move(func):
         def wrapper(self):
-            state = GameState(self.board, self.move_history,self.depth +1)
-            move_made = func(state)
+            exp_state = GameState(self.board, self.move_history,self.depth +1)
+            move_made = func(exp_state)
             if move_made:
-                return state
+                new_state = GameState(self.board, self.move_history,self.depth +1, (exp_state.x, exp_state.y))
+                move_made = func(new_state)
+                return new_state
             else:
                 return None
         return wrapper

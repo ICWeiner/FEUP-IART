@@ -25,10 +25,14 @@ class Board:
         self.add_piece('green',2,2)
         self.add_piece('green',2,3)
         self.add_piece('green',3,2)
-        self.add_piece('red',3,0)
+        #self.add_piece('red',3,0)
 
     def __eq__(self, other):
         return self.board == other.board
+    
+    def __hash__(self):
+        rows = [tuple(row) for row in self.board]
+        return hash(tuple(rows))
     
     def __str__ (self):
         text=""

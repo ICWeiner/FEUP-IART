@@ -7,6 +7,7 @@ class Piece:
         self.color = color
         self.y = y
         self.x = x
+        self.connected = True
 
 
     def __str__(self):
@@ -35,7 +36,7 @@ class Piece:
         self.y = y
 
 
-    def get_connected_pieces(self, board):
+    def get_connected_pieces(self, board): ##GET ALL CONNECTED PIECES
         visited = set()
         connected = set()
 
@@ -58,3 +59,40 @@ class Piece:
 
         dfs(self.x, self.y)
         return set(connected)
+    
+
+    def get_neighbors(self, board):
+        # Returns a list of neighboring pieces on the game board
+        neighbors = []
+        directions = [(0, 1), (0, -1), (1, 0), (-1, 0)]
+        for dx, dy in directions:
+            new_x, new_y = self.x + dx, self.y + dy
+            if 0 <= new_x < len(board) and 0 <= new_y < len(board[0]):
+                piece = board[new_x][new_y]
+                if piece is not None and piece.color == self.color:
+                    neighbors.append(piece)
+        return neighbors
+
+    def is_connected(self, board):
+        # check if the piece is already marked as connected
+        if self.connected:
+            return True
+        # create a set to keep track of visited pieces
+        visited = set()
+        # perform a depth-first search to find a connected piece
+        def dfs(piece):
+            if piece in visited:
+                return False
+            visited.add(piece)
+            if piece.connected:
+                return True
+            for neighbor in piece.get_neighbors(board):
+                if dfs(neighbor):
+                    return True
+            return False
+        # start the depth-first search from the current piece
+        result = dfs(self)
+        # mark the piece as connected if a connected piece is found
+        if result:
+            self.connected = True
+        return result
