@@ -16,7 +16,7 @@ class Board:
             for x in range(self.rows):
                 self.board[y].append(None)
 
-        self.add_piece('red',3,3)
+        #self.add_piece('red',3,3)
         self.add_piece('red',0,0)
         self.add_piece('red',1,0)
         self.add_piece('red',1,1)
@@ -25,10 +25,19 @@ class Board:
         self.add_piece('green',2,2)
         self.add_piece('green',2,3)
         self.add_piece('green',3,2)
+        self.add_piece('red',3,0)
 
     def __eq__(self, other):
-            return self.board == other.board
-
+        return self.board == other.board
+    
+    def __str__ (self):
+        text=""
+        for y in range(self.board.cols):
+            for x in range(self.board.rows):
+                piece =self.board[y][x]
+                if piece:
+                    text.join(piece)
+        return text
 
     def add_piece(self,color,x,y):
         piece = Piece(color,x,y)

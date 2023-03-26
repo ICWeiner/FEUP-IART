@@ -10,12 +10,12 @@ class Piece:
 
 
     def __str__(self):
-        return str(self.color)
+        return  "Piece has color:" + str(self.color) +  " Y:" + str(self.y) + "X:" + str(self.x) 
     
     def __eq__(self, other):
         if not other:
             return False
-        print( ( self.color == other.color and self.y == other.y and self.x == other.x) )
+        #print( ( self.color == other.color and self.y == other.y and self.x == other.x) )
         return self.color == other.color and self.y == other.y and self.x == other.x
 
     def __hash__(self):
