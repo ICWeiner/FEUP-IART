@@ -107,8 +107,8 @@ class GameState:
         x, y = self.start_pos
         moved = self.board.set_position((x, y-1), (selected_piece,x,y))
         if moved:
-            self.move_history.append("Piece at coordinates x:" + str(x) + " y:" + str(y) +" moved up" )
             self.start_pos = (self.start_pos[0],self.start_pos[1] - 1)
+            self.move_history.append(deepcopy(self.board))
         print("Up " + str(moved))
         return moved
 
@@ -120,8 +120,8 @@ class GameState:
         x, y = self.start_pos
         moved = self.board.set_position((x, y+1), (selected_piece,x, y))
         if moved:
-            self.move_history.append("Piece at coordinates x:" + str(x) + " y:" + str(y) +" moved down" )
             self.start_pos = (self.start_pos[0],self.start_pos[1] + 1)
+            self.move_history.append(deepcopy(self.board))
         print("Down " + str(moved))
         return moved
 
@@ -133,8 +133,8 @@ class GameState:
         x, y = self.start_pos
         moved = self.board.set_position((x - 1, y), (selected_piece,x,y))
         if moved:
-            self.move_history.append("Piece at coordinates x:" + str(x) + " y:" + str(y) +" moved left" )
             self.start_pos = (self.start_pos[0] - 1,self.start_pos[1])
+            self.move_history.append(deepcopy(self.board))
         print("Left " + str(moved))
         return moved
 
@@ -146,7 +146,7 @@ class GameState:
         x, y = self.start_pos
         moved = self.board.set_position((x+1, y), (selected_piece,x, y))
         if moved:
-            self.move_history.append("Piece at coordinates x:" + str(x) + " y:" + str(y) +" moved right" )
             self.start_pos = (self.start_pos[0] + 1,self.start_pos[1])
+            self.move_history.append(deepcopy(self.board))
         print("Right " + str(moved))
         return moved

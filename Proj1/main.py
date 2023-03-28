@@ -59,6 +59,23 @@ def a_star_search(initial_state):
     return came_from, cost_so_far
 
 
+def pc_play(sequence, screen, font):
+    if sequence:
+        count = 1
+        for history in sequence:
+            screen.fill((0, 0, 0))
+            history.draw(screen, count)
+            history.draw_pieces(screen, font)
+            pygame.display.flip()
+            pygame.time.delay(1000)
+            count += 1
+        history.draw_Goal(screen,True)
+        pygame.display.flip()
+
+    else:
+        print("No solution found")
+
+
 def print_sequence(sequence):
     if sequence:
         print("Steps:", len(sequence))
@@ -80,7 +97,6 @@ def main():
     clock = pygame.time.Clock()
     while True:
         events = pygame.event.get()
-
         for e in events:
             if e.type == pygame.QUIT:
                 return
@@ -89,9 +105,9 @@ def main():
                 selected_option = menu.handle_events(events)
                 if selected_option == 0:
                     board = Board(LVL1_ROWS,LVL1_COLS)
-                    #print_sequence(bfs(GameState(board)))
-                    print_sequence(a_star_search(GameState(board)))
+                    #print_sequence(a_star_search(GameState(board)))
                     screen = pygame.display.set_mode((SCREEN_SIZE_LVL1[0], SCREEN_SIZE_LVL1[1]))
+                    #pc_play(bfs(GameState(board)),screen, font)
                     selected_piece = None
                     drop_pos = None
                     count = 0
@@ -99,8 +115,8 @@ def main():
                     menu.isOpen = False
                 elif selected_option == 1:
                     board = Board(LVL2_ROWS,LVL2_COLS)
-                    #print_sequence(bfs(GameState(board)))
-                    print_sequence(a_star_search(GameState(board)))
+                    print_sequence(bfs(GameState(board)))
+                    #print_sequence(a_star_search(GameState(board)))
                     screen = pygame.display.set_mode((SCREEN_SIZE_LVL2[0], SCREEN_SIZE_LVL2[1]))
                     selected_piece = None
                     drop_pos = None

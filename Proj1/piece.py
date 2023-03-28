@@ -11,7 +11,8 @@ class Piece:
 
 
     def __str__(self):
-        return "Piece has color:" + str(self.color) +  " Y:" + str(self.y) + "X:" + str(self.x) 
+        #return "Piece has color:" + str(self.color) +  " Y:" + str(self.y) + "X:" + str(self.x) 
+        return str(self.color) 
     
     def __eq__(self, other):
         if not other:

@@ -26,6 +26,7 @@ class Board:
         self.add_piece('green',2,3)
         self.add_piece('green',3,2)
         #self.add_piece('red',3,0)
+        #self.add_piece('yellow',3,2)
 
 
     def __eq__(self, other):
@@ -68,7 +69,7 @@ class Board:
                 self.pieces[piece.color]+=1
 
 
-    def draw(self, screen, count, start_time):
+    def draw(self, screen, count, start_time=None):
         board_surf = pygame.Surface((TILESIZE * self.rows, TILESIZE * self.cols))
 
         for y in range(self.cols):
@@ -86,12 +87,13 @@ class Board:
         screen.blit(s1, s1_rect)
 
         #Time
-        elapsed_time = time.time() - start_time
-        timer_text = font.render("Time: {:.2f}s".format(elapsed_time), True, (255, 255, 255))
-        screen.blit(timer_text, (screen.get_width() - timer_text.get_width() - 20, screen.get_height() - timer_text.get_height() - 30))
+        if start_time is not None:
+            elapsed_time = time.time() - start_time
+            timer_text = font.render("Time: {:.2f}s".format(elapsed_time), True, (255, 255, 255))
+            screen.blit(timer_text, (screen.get_width() - timer_text.get_width() - 20, screen.get_height() - timer_text.get_height() - 30))
     
 
-    def draw_pieces(self, screen, font, selected_piece):
+    def draw_pieces(self, screen, font, selected_piece=None):
         sx, sy = None, None
         selected = False
         if selected_piece:
@@ -101,7 +103,7 @@ class Board:
             for x in range(self.rows): 
                 piece = self.board[y][x]
                 if piece:
-                    selected = x == sx and y == sy
+                    if selected_piece: selected = x == sx and y == sy
                     piece.draw(screen, font, selected)
     
     
