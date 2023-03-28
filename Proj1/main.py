@@ -120,29 +120,27 @@ def main():
 
             if menu.isOpen:
                 selected_option = menu.handle_events(events)
-                if selected_option == 0:
+                if selected_option == 0 or selected_option == 1:
                     board = Board(LVL1_ROWS,LVL1_COLS)
-                    #print_sequence(bfs(GameState(board)))
-                    #print_sequence(a_star_search(GameState(board)))
-                    print_sequence(greedy_search(GameState(board)))
                     screen = pygame.display.set_mode((SCREEN_SIZE_LVL1[0], SCREEN_SIZE_LVL1[1]))
-                    #pc_play(bfs(GameState(board)),screen, font)
+                    s1 = pygame.font.SysFont('Arial',TILESIZE//2).render("Loading..." , True, pygame.Color('white'))
+                    s1_rect = s1.get_rect()
+                    s1_rect.center = screen.get_rect().center
+                    screen.blit(s1, s1_rect)
+                    pygame.display.update()
+                    sequence = bfs(GameState(board)) if selected_option == 0 else a_star_search(GameState(board))
+                    pc_play(sequence,screen,font)
+
+                elif selected_option == 2 or selected_option == 3:
+                    board = Board(LVL1_ROWS,LVL1_COLS) if selected_option == 2 else Board(LVL2_ROWS,LVL2_COLS)
+                    screen = pygame.display.set_mode((SCREEN_SIZE_LVL1[0], SCREEN_SIZE_LVL1[1])) if selected_option == 2 else pygame.display.set_mode((SCREEN_SIZE_LVL2[0], SCREEN_SIZE_LVL2[1]))
                     selected_piece = None
                     drop_pos = None
                     count = 0
                     start_time = time.time()
                     menu.isOpen = False
-                elif selected_option == 1:
-                    board = Board(LVL2_ROWS,LVL2_COLS)
-                    print_sequence(bfs(GameState(board)))
-                    #print_sequence(a_star_search(GameState(board)))
-                    screen = pygame.display.set_mode((SCREEN_SIZE_LVL2[0], SCREEN_SIZE_LVL2[1]))
-                    selected_piece = None
-                    drop_pos = None
-                    count = 0
-                    start_time = time.time()
-                    menu.isOpen = False     
-                elif selected_option == 2:
+
+                elif selected_option == 4:
                     return
                 selected_option = None
 
@@ -176,7 +174,7 @@ def main():
             piece, x, y = board.get_square_under_mouse()
             board.draw_pieces(screen, font, selected_piece)
             board.draw_selector(screen, piece)
-            drop_pos = board.draw_drag(screen, selected_piece, font)
+            drop_pos = board.draw_drag(screen, font, selected_piece)
 
         pygame.display.flip()
         clock.tick(60)

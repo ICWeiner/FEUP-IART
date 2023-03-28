@@ -1,4 +1,5 @@
 from copy import deepcopy
+from os import sys
 
 class GameState:
 
@@ -19,9 +20,12 @@ class GameState:
             for i in range(self.board.rows):
                 piece = self.board.get_square(j,i)
                 if piece is not None and not piece.connected:
-                    dist = abs(i - piece.row) + abs(j - piece.col)
+                    dist = abs(i - piece.y) + abs(j - piece.x)
+                    print(dist)
                     if dist < nearest_dist:
                         nearest_dist = dist
+        print(nearest_dist)
+        sys.exit()
         return nearest_dist
     
 

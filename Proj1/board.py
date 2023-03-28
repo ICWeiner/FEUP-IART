@@ -209,7 +209,7 @@ class Board:
                 pygame.draw.rect(screen, (255, 0, 0, 50), rect, 2)  #FIXME fix color
     
 
-    def draw_drag(self, screen, selected_piece, font):
+    def draw_drag(self, screen, font, selected_piece):
         if selected_piece:
             piece, x, y = self.get_square_under_mouse()
             if x != None:

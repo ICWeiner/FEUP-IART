@@ -61,7 +61,7 @@ class Piece:
         return set(connected)
     
     
-    '''
+
     def get_neighbors(self, board):
         # Returns a list of neighboring pieces on the game board
         neighbors = []
@@ -73,4 +73,4 @@ class Piece:
                 if piece is not None and piece.color == self.color:
                     neighbors.append(piece)
         return neighbors
-    '''
+
