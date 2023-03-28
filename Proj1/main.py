@@ -36,9 +36,25 @@ def bfs(initial_state):
     return None 
 
 
+def greedy_search(initial_state):
+    queue = PriorityQueue()
+    queue.put((initial_state.manhattan_distance_heuristic(), initial_state))
+    came_from = {}
+    while not queue.empty():
+        state = queue.get()[1]
+        if state.board.goal_state():
+            return state.move_history
+        for child in state.children():
+            if child.id not in came_from:
+                priority = child.manhattan_distance_heuristic()
+                queue.put((priority, child))
+                came_from[child.id] = state
+    return came_from
+
+
 def a_star_search(initial_state):
     queue = PriorityQueue()
-    queue.put((0,initial_state))
+    queue.put((initial_state.manhattan_distance_heuristic(),initial_state))
     came_from = {}
     cost_so_far = {}
     cost_so_far[initial_state.id] = 0  # Set cost of initial state to zero
@@ -78,11 +94,12 @@ def pc_play(sequence, screen, font):
 
 def print_sequence(sequence):
     if sequence:
-        print("Steps:", len(sequence))
-        print()
-        for state in sequence:
-            print(state)
-            print()
+        print("Solved in :" + str(len(sequence)) + " moves")
+        #print("Steps:", len(sequence))
+        #print()
+        #for state in sequence:
+        #    print(state)
+        #    print()
     else:
         print("No solution found")
 
@@ -105,7 +122,9 @@ def main():
                 selected_option = menu.handle_events(events)
                 if selected_option == 0:
                     board = Board(LVL1_ROWS,LVL1_COLS)
+                    #print_sequence(bfs(GameState(board)))
                     #print_sequence(a_star_search(GameState(board)))
+                    print_sequence(greedy_search(GameState(board)))
                     screen = pygame.display.set_mode((SCREEN_SIZE_LVL1[0], SCREEN_SIZE_LVL1[1]))
                     #pc_play(bfs(GameState(board)),screen, font)
                     selected_piece = None
