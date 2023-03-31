@@ -4,7 +4,7 @@ from macros import TILESIZE
 class Menu:
     def __init__(self, screen_size):
         self.font = pygame.font.SysFont('Arial', TILESIZE//2)
-        self.options = ['PC play 4x4 BFS','PC play 4x4 A*','New Game 4x4','New Game 6x6','Quit']
+        self.options = ['PC play 4x4 BFS','PC play 4x4 DFS','PC play 4x4 A*','PC play 4x4 Greedy','New Game 4x4','New Game 6x6','Quit']
         self.labels = [self.font.render(option, True, (255, 255, 255)) for option in self.options]
         self.width = max(label.get_width() for label in self.labels)
         self.height = len(self.options) * self.font.get_height()

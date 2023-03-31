@@ -17,7 +17,7 @@ import time
 
 def bfs(initial_state):
     queue = [initial_state]
-    visited = set() # to not visit the same state twice
+    visited = set() # to avoid visit the same state twice
 
     while queue:
         print("queue size " + str(len(queue)))
@@ -29,11 +29,26 @@ def bfs(initial_state):
         for child in state.children():
             if child not in visited:
                 #print(child.board)
-                # add the child state to the queue
-                queue.append(child)
-            #else:
-                #print("HELLO1")
+                queue.append(child) # add the child state to the queue
     return None 
+
+def dfs(initial_state):
+    stack = [initial_state]
+    visited = set()
+
+    while stack:
+        print("stack size " + str(len(stack)))
+        state = stack.pop()
+        visited.add(state)
+        if state.board.goal_state():
+            return state.move_history
+
+        for child in reversed(state.children()):  # traverse children in reverse order
+            if child not in visited:
+                stack.append(child)
+
+    return None
+
 
 
 def greedy_search(initial_state):
@@ -75,6 +90,35 @@ def a_star_search(initial_state):
     return came_from, cost_so_far
 
 
+def delay(milliseconds):
+    # Wait for the given time period, but handling some events
+    now = pygame.time.get_ticks() # zero point
+    delay = now + milliseconds # finish time
+
+    while now < delay:
+        for e in pygame.event.get():
+            if (e.type == pygame.QUIT):
+                # re-post this to handle in the main loop
+                pygame.event.post(pygame.event.Event(pygame.QUIT))      
+                return
+
+        pygame.display.update()
+        pygame.time.wait(300) # save some CPU for a split-second
+        now = pygame.time.get_ticks() 
+
+
+def next_step():
+    while True:
+        for e in pygame.event.get():
+            if e.type == pygame.QUIT:
+                # re-post this to handle in the main loop
+                pygame.event.post(pygame.event.Event(pygame.QUIT))      
+                return
+            if e.type == pygame.KEYDOWN:
+                if e.key == pygame.K_RIGHT:
+                    return
+
+
 def pc_play(sequence, screen, font):
     if sequence:
         count = 1
@@ -83,11 +127,9 @@ def pc_play(sequence, screen, font):
             history.draw(screen, count)
             history.draw_pieces(screen, font)
             pygame.display.flip()
-            pygame.time.delay(1000)
             count += 1
-        history.draw_Goal(screen,True)
-        pygame.display.flip()
-
+            delay(1000)
+            #next_step()
     else:
         print("No solution found")
 
@@ -108,8 +150,8 @@ def main():
     pygame.init()
     font = pygame.font.SysFont('Arial', TILESIZE)
     pygame.display.set_caption('Cohesion')
-    screen = pygame.display.set_mode((SCREEN_SIZE_LVL1[0], SCREEN_SIZE_LVL1[1]))
-    menu = Menu(SCREEN_SIZE_LVL1)
+    screen = pygame.display.set_mode((SCREEN_SIZE_LVL2))
+    menu = Menu(SCREEN_SIZE_LVL2)
 
     clock = pygame.time.Clock()
     while True:
@@ -119,30 +161,41 @@ def main():
                 return
 
             if menu.isOpen:
-                selected_option = menu.handle_events(events)
-                if selected_option == 0 or selected_option == 1:
-                    board = Board(LVL1_ROWS,LVL1_COLS)
-                    screen = pygame.display.set_mode((SCREEN_SIZE_LVL1[0], SCREEN_SIZE_LVL1[1]))
-                    s1 = pygame.font.SysFont('Arial',TILESIZE//2).render("Loading..." , True, pygame.Color('white'))
-                    s1_rect = s1.get_rect()
-                    s1_rect.center = screen.get_rect().center
-                    screen.blit(s1, s1_rect)
-                    pygame.display.update()
-                    sequence = bfs(GameState(board)) if selected_option == 0 else a_star_search(GameState(board))
-                    pc_play(sequence,screen,font)
+                menu.handle_events(events)
 
-                elif selected_option == 2 or selected_option == 3:
-                    board = Board(LVL1_ROWS,LVL1_COLS) if selected_option == 2 else Board(LVL2_ROWS,LVL2_COLS)
-                    screen = pygame.display.set_mode((SCREEN_SIZE_LVL1[0], SCREEN_SIZE_LVL1[1])) if selected_option == 2 else pygame.display.set_mode((SCREEN_SIZE_LVL2[0], SCREEN_SIZE_LVL2[1]))
+                if menu.selected_option == 6:
+                    return
+                
+                elif menu.selected_option == 4 or menu.selected_option == 5:
+                    board = Board(LVL1_ROWS,LVL1_COLS) if menu.selected_option == 4 else Board(LVL2_ROWS,LVL2_COLS)
+                    screen = pygame.display.set_mode((SCREEN_SIZE_LVL1)) if menu.selected_option == 4 else pygame.display.set_mode((SCREEN_SIZE_LVL2))
+                    piece = None
                     selected_piece = None
                     drop_pos = None
                     count = 0
                     start_time = time.time()
                     menu.isOpen = False
 
-                elif selected_option == 4:
-                    return
-                selected_option = None
+                elif menu.selected_option is not None:
+                    board = Board(LVL1_ROWS,LVL1_COLS)
+                    screen = pygame.display.set_mode((SCREEN_SIZE_LVL1))
+                    s1 = pygame.font.SysFont('Arial',TILESIZE//2).render("Loading..." , True, pygame.Color('white'))
+                    s1_rect = s1.get_rect()
+                    s1_rect.center = screen.get_rect().center
+                    screen.blit(s1, s1_rect)
+                    pygame.display.update()
+                    if menu.selected_option == 0:
+                        sequence = bfs(GameState(board))
+                    elif menu.selected_option == 1:
+                        sequence = dfs(GameState(board))
+                    elif menu.selected_option == 2:
+                        sequence = a_star_search(GameState(board))
+                    else:
+                        sequence = greedy_search(GameState(board))
+                    pc_play(sequence,screen,font)
+                    screen = pygame.display.set_mode((SCREEN_SIZE_LVL2))
+                    
+                menu.selected_option = None
 
             else:
                 if e.type == pygame.MOUSEBUTTONDOWN:
@@ -158,10 +211,10 @@ def main():
 
                 if e.type == pygame.KEYDOWN:
                     if e.key == pygame.K_ESCAPE:
-                        screen = pygame.display.set_mode((SCREEN_SIZE_LVL1[0], SCREEN_SIZE_LVL1[1]))
+                        screen = pygame.display.set_mode((SCREEN_SIZE_LVL2))
                         menu.selected_option = None
                         menu.isOpen = True
-
+        
         screen.fill((0, 0, 0))
         if menu.isOpen:
             menu.draw(screen)
@@ -171,8 +224,8 @@ def main():
             #board.draw_Goal(screen,False)
         else:
             board.draw(screen, count, start_time)
-            piece, x, y = board.get_square_under_mouse()
             board.draw_pieces(screen, font, selected_piece)
+            piece, x, y = board.get_square_under_mouse()
             board.draw_selector(screen, piece)
             drop_pos = board.draw_drag(screen, font, selected_piece)
 
