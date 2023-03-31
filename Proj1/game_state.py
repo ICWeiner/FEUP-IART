@@ -24,8 +24,8 @@ class GameState:
                     print(dist)
                     if dist < nearest_dist:
                         nearest_dist = dist
-        print(nearest_dist)
-        sys.exit()
+        #print(nearest_dist)
+        #sys.exit()
         return nearest_dist
     
 
