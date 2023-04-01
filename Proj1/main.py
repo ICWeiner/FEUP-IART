@@ -27,8 +27,8 @@ def main():
     pygame.init()
     font = pygame.font.SysFont('Arial', TILESIZE)
     pygame.display.set_caption('Cohesion')
-    screen = pygame.display.set_mode((SCREEN_SIZE_LVL2))
-    menu = Menu(SCREEN_SIZE_LVL2)
+    screen = pygame.display.set_mode((MENU_SCREEN_SIZE))
+    menu = Menu(MENU_SCREEN_SIZE)
 
     clock = pygame.time.Clock()
     while True:
@@ -39,13 +39,13 @@ def main():
 
             if menu.isOpen:
                 menu.handle_events(events)
-                if menu.selected_option == 10:
+                if menu.selected_option == 14:
                     return
                 
-                elif menu.selected_option == 8 or menu.selected_option == 9:
+                elif menu.selected_option == 12 or menu.selected_option == 13:
                     #print(menu.selected_option)
-                    board = Board(LVL1_ROWS,LVL1_COLS) if menu.selected_option == 8 else Board(LVL2_ROWS,LVL2_COLS)
-                    screen = pygame.display.set_mode((SCREEN_SIZE_LVL1)) if menu.selected_option == 8 else pygame.display.set_mode((SCREEN_SIZE_LVL2))
+                    board = Board(LVL1_ROWS,LVL1_COLS) if menu.selected_option == 12 else Board(LVL2_ROWS,LVL2_COLS)
+                    screen = pygame.display.set_mode((SCREEN_SIZE_LVL1)) if menu.selected_option == 12 else pygame.display.set_mode((SCREEN_SIZE_LVL2))
                     piece = None
                     selected_piece = None
                     drop_pos = None
@@ -56,7 +56,7 @@ def main():
 
                 elif menu.selected_option is not None:
                     #print(menu.selected_option)
-                    if menu.selected_option == 0 or menu.selected_option == 1 or menu.selected_option == 2 or menu.selected_option == 3:
+                    if menu.selected_option < 6:
                         pc_play = PCPlay(GameState(Board(LVL1_ROWS,LVL1_COLS)))
                         screen = pygame.display.set_mode((SCREEN_SIZE_LVL1))
                     else:
@@ -65,15 +65,19 @@ def main():
 
                     draw_string(screen,"Loading...",TILESIZE//2)
                     
-                    if menu.selected_option == 0 or menu.selected_option == 4:
+                    if menu.selected_option == 0 or menu.selected_option == 6:
                         pc_play.draw(pc_play.bfs(),screen,font)
-                    elif menu.selected_option == 1 or menu.selected_option == 5:
+                    elif menu.selected_option == 1 or menu.selected_option == 7:
                         pc_play.draw(pc_play.dfs(),screen,font)
-                    elif menu.selected_option == 2  or menu.selected_option == 6:
+                    elif menu.selected_option == 2 or menu.selected_option == 8:
                         pc_play.draw(pc_play.a_star_search(),screen,font)
-                    else:
+                    elif menu.selected_option == 3 or menu.selected_option == 9:
                         pc_play.draw(pc_play.greedy_search(),screen,font)
-                    screen = pygame.display.set_mode((SCREEN_SIZE_LVL2))
+                    elif menu.selected_option == 4 or menu.selected_option == 10:
+                        pc_play.draw(pc_play.a_star_search("color"),screen,font)
+                    elif menu.selected_option == 5 or menu.selected_option == 11:
+                        pc_play.draw(pc_play.greedy_search("color"),screen,font)
+
                     mode = "PC"
                     menu.isOpen = False
                     
@@ -94,7 +98,7 @@ def main():
 
                 if e.type == pygame.KEYDOWN:
                     if e.key == pygame.K_ESCAPE:
-                        screen = pygame.display.set_mode((SCREEN_SIZE_LVL2))
+                        screen = pygame.display.set_mode((MENU_SCREEN_SIZE))
                         menu.selected_option = None
                         menu.isOpen = True
         
@@ -106,16 +110,16 @@ def main():
                 board.draw_Goal(screen,True)
             elif mode == "UserLvl1" and (count > 10 or time.time()-start_time > 30): #TODO change this later for different levels
                 board.draw_Goal(screen,False)
-            #elif mode == "UserLvl2" and (count > 30 or time.time()-start_time > 60):
-                #board.draw_Goal(screen,False)
-            elif menu.isOpen == False:
+            elif mode == "UserLvl2" and (count > 30 or time.time()-start_time > 80):
+                board.draw_Goal(screen,False)
+            else:
                 board.draw(screen, count, start_time)
                 board.draw_pieces(screen, font, selected_piece)
                 piece, x, y = board.get_square_under_mouse()
                 board.draw_selector(screen, piece)
                 drop_pos = board.draw_drag(screen, font, selected_piece)
         else:
-            draw_string(screen,"Press 'Esc' to access the menu",TILESIZE//3)
+            draw_string(screen,"Press 'Esc' to access the menu",TILESIZE//4)
         pygame.display.flip()
         clock.tick(60)
 

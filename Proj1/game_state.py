@@ -1,24 +1,22 @@
 from copy import deepcopy
-from os import sys
 from itertools import combinations
 
-class GameState:
+class GameState: #class that represents a game state and its various properties
 
     def __init__(self, board, move_history = [], depth = 0, start_pos=(0,0), cost_so_far=0): #start_pos should match coordinates of an actual piece or else 💀
         self.board = deepcopy(board)
-        self.depth = depth
+        self.depth = depth #depth of current node, equals number of moves made in this particular state
         if (depth == 0):
             self.move_history = [] + move_history + [deepcopy(self.board)]#add first state to history
-        #self.move_history = [] + move_history + [deepcopy(self.board)]
         else:
             self.move_history = [] + move_history
         self.cost_so_far = cost_so_far
         self.start_pos = start_pos
         self.id = id(self)
    
-    def manhattan_distance_heuristic(self):
+    def manhattan_distance_heuristic(self): #calculates the total manhattan distance pieces of the same colour and ads them all
         distances = []
-        colors = ["red", "green", "yellow", 'blue']
+        colors = ['red', 'green', 'yellow', 'blue']
         for color in colors:
             color_pieces = [piece for row in self.board.board for piece in row if piece and piece.color == color]
             connected_pieces = set()
@@ -33,32 +31,10 @@ class GameState:
                             distance += abs(piece.x - other_piece.x) + abs(piece.y - other_piece.y)
             distances.append(distance)
         
-        return sum(distances)
-    
-    '''
-    def disconnected_squares_heuristic(state):
-        board = state.board
-        goal_state = board.goal_state()
-        if state == goal_state:
-            return 0
-        
-        num_disconnected_squares = 0
-        total_distance = 0
-        
-        for row in range(board.size):
-            for col in range(board.size):
-                piece = board.get_square(row, col)
-                if not piece:
-                    continue
-                if piece.color != goal_state.board.get_square(row, col).color:
-                    num_disconnected_squares += 1
-                    total_distance += state.manhattan_distance_heuristic((row, col), goal_state.get_color_goal(piece.color))
-                    
-        return num_disconnected_squares * board.size + total_distance
-    '''
-    
+        return sum(distances)   
 
-    def color_clusters_heuristic(self):
+
+    def color_clusters_heuristic(self): #calculates the minimum distance between clusters of different colors,
         clusters = {}
         for y in range(self.board.cols):
             for x in range(self.board.rows):
@@ -104,7 +80,7 @@ class GameState:
         return self.board
 
 
-    def children(self):
+    def children(self): #generate all legal child states
         functions = [self.moveUp, self.moveDown, self.moveLeft, self.moveRight]
         children = []
         for func in functions:
@@ -116,7 +92,7 @@ class GameState:
         return children
     
 
-    def find_pieces(self):
+    def find_pieces(self): #find all pieces on the board
         pieces = []
         for y in range(self.board.cols):
             for x in range(self.board.rows):

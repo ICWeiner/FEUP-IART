@@ -1,7 +1,7 @@
 import pygame
 from macros import TILESIZE
 
-class Piece:
+class Piece:#class representing a single piece and its properties
 
     def __init__(self, color, y, x):
         self.color = color

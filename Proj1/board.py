@@ -3,7 +3,7 @@ from piece import Piece
 from macros import TILESIZE
 import time
 
-class Board:
+class Board: #class representing a game board
     def __init__(self, rows, cols):
         self.rows = rows
         self.cols = cols
