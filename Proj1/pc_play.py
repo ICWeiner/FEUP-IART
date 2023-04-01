@@ -7,8 +7,8 @@ class PCPlay:
 
     def __init__(self, initial_state):
         self.initial_state = initial_state
-        #self.buttons = ['Next','Previous']
-        #self.selected_option = None
+        self.options = ['Next','Previous']
+        self.selected_option = None
 
 
     def bfs(self):
@@ -35,7 +35,7 @@ class PCPlay:
 
         while stack:
             print("stack size " + str(len(stack)))
-            state = stack.pop()
+            state = stack.pop(0)
             visited.add(state)
             if state.board.goal_state():
                 return state.move_history
@@ -71,7 +71,7 @@ class PCPlay:
         cost_so_far[self.initial_state.id] = 0  # Set cost of initial state to zero
         while not queue.empty():
             state = queue.get()[1]
-            print(type(state))
+            #print(type(state))
 
             if state.board.goal_state():
                 return state.move_history
@@ -84,16 +84,8 @@ class PCPlay:
                     queue.put((priority,child))
                     came_from[child.id] = state
         return came_from, cost_so_far
-    
 
-    def draw_loading(self,screen):
-        s1 = pygame.font.SysFont('Arial',TILESIZE//2).render("Loading..." , True, pygame.Color('white'))
-        s1_rect = s1.get_rect()
-        s1_rect.center = screen.get_rect().center
-        screen.blit(s1, s1_rect)
-        pygame.display.update()
-
-
+    '''
     def delay(self, milliseconds):
         # Wait for the given time period, but handling some events
         now = pygame.time.get_ticks() # zero point
@@ -102,44 +94,64 @@ class PCPlay:
         while now < delay:
             for event in pygame.event.get():
                 if (event.type == pygame.QUIT):
-                    sys.exit()
-
-            #pygame.display.update()
-            pygame.time.wait(300) # save some CPU for a split-second
-            now = pygame.time.get_ticks()  
-
-
-    def next_step():
-        while True:
-            for e in pygame.event.get():
-                if e.type == pygame.QUIT:
                     # re-post this to handle in the main loop
                     #pygame.event.post(pygame.event.Event(pygame.QUIT))      
                     #return
                     sys.exit()
-                if e.type == pygame.KEYDOWN:
-                    if e.key == pygame.K_RIGHT:
-                        return
-                    
+
+            pygame.display.update()
+            pygame.time.wait(300) # save some CPU for a split-second
+            now = pygame.time.get_ticks()  
+    '''
+
+    def next_step(self,screen):
+        # Draw buttons
+        button1_rect = pygame.Rect((screen.get_width()-70, screen.get_height()-60, 50, 25))
+        #button2_rect = pygame.draw.rect(screen, (255, 0, 0), (screen.get_width()-50-10, screen.get_height()-25-10, 50, 25))
+        button_surf = pygame.Surface(button1_rect.size)
+        button_surf.fill(pygame.Color('darkgrey'))
+        text_surf = pygame.font.SysFont('Arial',16).render(self.options[0], True, pygame.Color('black'))
+        text_pos = text_surf.get_rect(center=button_surf.get_rect().center)
+        button_surf.blit(text_surf, text_pos)
+        screen.blit(button_surf, button1_rect)
+        pygame.display.flip()
+
+        while True:
+            for e in pygame.event.get():
+                if e.type == pygame.QUIT:
+                    sys.exit()
+            
+                if e.type == pygame.MOUSEBUTTONDOWN:
+                    if button1_rect.collidepoint(pygame.mouse.get_pos()):
+                        print("Button 1 clicked!")
+                        self.selected_option = 0
+                    #elif button2_rect.collidepoint(pygame.mouse.get_pos()):
+                        #print("Button 2 clicked!")
+
+                if e.type == pygame.MOUSEBUTTONUP:
+                        if self.selected_option is not None:
+                            self.selected_option = None
+                            return
+            
 
     def draw(self, sequence, screen, font):
         if sequence:
-            count = 1
+            count = 0
             for history in sequence:
                 screen.fill((0, 0, 0))
                 history.draw(screen, count)
                 history.draw_pieces(screen, font)
                 pygame.display.flip()
                 count += 1
-                #pygame.time.delay(1000)
-                self.delay(1000)
+                self.next_step(screen)
+                #self.delay(1000)
         else:
             print("No solution found")
 
     
     def print_sequence(sequence):
         if sequence:
-            print("Solved in :" + str(len(sequence)) + " moves")
+            print("Solved in :" + str(len(sequence)-1) + " moves")
             #print("Steps:", len(sequence))
             #print()
             #for state in sequence:

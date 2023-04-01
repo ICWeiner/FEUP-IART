@@ -6,28 +6,55 @@ class GameState:
     def __init__(self, board, move_history = [], depth = 0, start_pos=(0,0), cost_so_far=0): #start_pos should match coordinates of an actual piece or else 💀
         self.board = deepcopy(board)
         self.depth = depth
+        if (depth == 0):
+            self.move_history = [] + move_history + [deepcopy(self.board)]#add first state to history
         #self.move_history = [] + move_history + [deepcopy(self.board)]
-        self.move_history = [] + move_history
+        else:
+            self.move_history = [] + move_history
         self.cost_so_far = cost_so_far
         self.start_pos = start_pos
         self.id = id(self)
    
-
     def manhattan_distance_heuristic(self):
-        # Find the nearest unconnected piece of the same color 
-        nearest_dist = float('inf')
-        for j in range(self.board.cols):
-            for i in range(self.board.rows):
-                piece = self.board.get_square(j,i)
-                if piece is not None and not piece.connected:
-                    dist = abs(i - piece.y) + abs(j - piece.x)
-                    print(dist)
-                    if dist < nearest_dist:
-                        nearest_dist = dist
-        #print(nearest_dist)
-        #sys.exit()
-        return nearest_dist
-    
+        distances = []
+        colors = ["red", "green", "yellow"]
+        for color in colors:
+            color_pieces = [piece for row in self.board.board for piece in row if piece and piece.color == color]
+            connected_pieces = set()
+            distance = 0
+
+            while color_pieces:
+                piece = color_pieces.pop()
+                if piece not in connected_pieces:
+                    connected_pieces |= piece.get_connected_pieces(self.board)
+                    for other_piece in color_pieces:
+                        if other_piece not in connected_pieces:
+                            distance += abs(piece.x - other_piece.x) + abs(piece.y - other_piece.y)
+            distances.append(distance)
+        
+        return sum(distances)
+
+    '''
+    def manhattan_distance_heuristic(self):
+        piece = self.board.get_square(self.start_pos[1],self.start_pos[0])
+
+        if piece is None: #TODO: melhorar
+            sys.exit()
+
+        color = piece.color
+        connected_pieces = piece.get_connected_pieces(self.board)
+
+        min_distance = float('inf')
+        for i in range(len(self.board.board)):
+            for j in range(len(self.board.board[0])):
+                other_piece = self.board.board[i][j]
+                if other_piece is not None and other_piece.color == color and other_piece not in connected_pieces:
+                    distance = abs(piece.x - j) + abs(piece.y - i)
+                    if distance < min_distance:
+                        min_distance = distance
+
+        return min_distance
+    '''
 
     def disconnected_squares_heuristic(state):
         board = state.board
@@ -45,7 +72,7 @@ class GameState:
                     continue
                 if piece.color != goal_state.board.get_square(row, col).color:
                     num_disconnected_squares += 1
-                    total_distance += state.manhattan_distance((row, col), goal_state.get_color_goal(piece.color))
+                    total_distance += state.manhattan_distance_heuristic((row, col), goal_state.get_color_goal(piece.color))
                     
         return num_disconnected_squares * board.size + total_distance
     
@@ -76,6 +103,7 @@ class GameState:
             child = func()
             if child is not None:
                 child.depth = self.depth + 1
+                child.cost_so_far = self.cost_so_far + 1 + child.manhattan_distance_heuristic()
                 children.append(child)
         return children
     

@@ -25,14 +25,7 @@ class Board:
         self.add_piece('green',2,2)
         self.add_piece('green',2,3)
         self.add_piece('green',3,2)
-        #self.add_piece('red',3,0)
-        #self.add_piece('yellow',3,2)
-
-
-    def __eq__(self, other):
-        if isinstance(other, Board):
-            return self.rows == other.rows and self.cols == other.cols and self.board == other.board
-        return False
+        #self.add_piece('red',3,0)sys
     
     def __hash__(self):
         rows = [tuple(row) for row in self.board]
