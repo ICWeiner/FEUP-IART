@@ -16,16 +16,35 @@ class Board:
             for x in range(self.rows):
                 self.board[y].append(None)
 
-        self.add_piece('red',3,3)
-        self.add_piece('red',0,0)
-        self.add_piece('red',1,0)
-        self.add_piece('red',1,1)
-        self.add_piece('green',0,1)
-        self.add_piece('yellow',0,3)
-        self.add_piece('green',2,2)
-        self.add_piece('green',2,3)
-        self.add_piece('green',3,2)
-        #self.add_piece('red',3,0)sys
+        if (rows < 6 and cols < 6):
+            self.add_piece('red',3,3) #sus
+            self.add_piece('red',0,0)
+            self.add_piece('red',1,0)
+            self.add_piece('red',1,1)
+            self.add_piece('green',0,1)
+            self.add_piece('yellow',0,3)
+            self.add_piece('green',2,2)
+            self.add_piece('green',2,3)
+            self.add_piece('green',3,2)
+
+        else:
+            self.add_piece('red',0,0)
+            self.add_piece('green',0,2)
+            self.add_piece('blue',0,4)
+            self.add_piece('blue',1,5)
+            self.add_piece('blue',0,5)
+            self.add_piece('yellow',2,1)
+            self.add_piece('red',2,3)
+            self.add_piece('green',2,5)
+            self.add_piece('blue',4,0)
+            self.add_piece('yellow',4,2)
+            self.add_piece('yellow',0,2)
+            self.add_piece('yellow',0,3)
+            self.add_piece('red',4,4)
+            self.add_piece('red',4,3)
+            self.add_piece('red',5,3)
+            self.add_piece('green',4,5)
+
     
     def __hash__(self):
         rows = [tuple(row) for row in self.board]
@@ -111,7 +130,7 @@ class Board:
 
 
     def set_position(self, drop_pos, selected_piece):
-        if not drop_pos or not selected_piece: return False
+        if not drop_pos or drop_pos[0] is None or drop_pos[1] is None or not selected_piece: return False
         
         new_x, new_y = drop_pos
         piece, old_x, old_y = selected_piece
@@ -122,13 +141,13 @@ class Board:
             self.set_square(connected_piece.y, connected_piece.x, None)
 
         for connected_piece in connected_pieces:
-            if not self.verify_position(connected_piece.x + new_x - old_x, connected_piece.y + new_y - old_y, connected_piece.x, connected_piece.y):
-                for old_connected_piece in old_connected_pieces:
-                    self.set_square(old_connected_piece.y, old_connected_piece.x, old_connected_piece)
-                return False
+                if not self.verify_position(connected_piece.x + new_x - old_x, connected_piece.y + new_y - old_y, connected_piece.x, connected_piece.y):
+                    for old_connected_piece in old_connected_pieces:
+                        self.set_square(old_connected_piece.y, old_connected_piece.x, old_connected_piece)
+                    return False
 
-        for connected_piece in connected_pieces:    
-            self.set_square(connected_piece.y + new_y - old_y, connected_piece.x + new_x - old_x, connected_piece)
+        for connected_piece in connected_pieces:  
+                self.set_square(connected_piece.y + new_y - old_y, connected_piece.x + new_x - old_x, connected_piece)
         return True
     
 

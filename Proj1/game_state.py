@@ -1,5 +1,6 @@
 from copy import deepcopy
 from os import sys
+from itertools import combinations
 
 class GameState:
 
@@ -17,7 +18,7 @@ class GameState:
    
     def manhattan_distance_heuristic(self):
         distances = []
-        colors = ["red", "green", "yellow"]
+        colors = ["red", "green", "yellow", 'blue']
         for color in colors:
             color_pieces = [piece for row in self.board.board for piece in row if piece and piece.color == color]
             connected_pieces = set()
@@ -33,29 +34,8 @@ class GameState:
             distances.append(distance)
         
         return sum(distances)
-
+    
     '''
-    def manhattan_distance_heuristic(self):
-        piece = self.board.get_square(self.start_pos[1],self.start_pos[0])
-
-        if piece is None: #TODO: melhorar
-            sys.exit()
-
-        color = piece.color
-        connected_pieces = piece.get_connected_pieces(self.board)
-
-        min_distance = float('inf')
-        for i in range(len(self.board.board)):
-            for j in range(len(self.board.board[0])):
-                other_piece = self.board.board[i][j]
-                if other_piece is not None and other_piece.color == color and other_piece not in connected_pieces:
-                    distance = abs(piece.x - j) + abs(piece.y - i)
-                    if distance < min_distance:
-                        min_distance = distance
-
-        return min_distance
-    '''
-
     def disconnected_squares_heuristic(state):
         board = state.board
         goal_state = board.goal_state()
@@ -75,6 +55,34 @@ class GameState:
                     total_distance += state.manhattan_distance_heuristic((row, col), goal_state.get_color_goal(piece.color))
                     
         return num_disconnected_squares * board.size + total_distance
+    '''
+    
+
+    def color_clusters_heuristic(self):
+        clusters = {}
+        for y in range(self.board.cols):
+            for x in range(self.board.rows):
+                piece = self.board.get_square(y,x)
+                if piece is not None:
+                    if piece.color not in clusters:
+                        clusters[piece.color] = []
+                    clusters[piece.color].append((piece.x, piece.y))
+
+        if len(clusters) < 2:
+            return 0
+
+        cost = 0
+        for color1, color2 in combinations(clusters.keys(), 2):
+            min_distance = float('inf')
+            for x1, y1 in clusters[color1]:
+                for x2, y2 in clusters[color2]:
+                    distance = abs(x1 - x2) + abs(y1 - y2)
+                    if distance < min_distance:
+                        min_distance = distance
+            cost += min_distance
+
+        return cost
+
     
 
     def get_cost_so_far(self, pos):
