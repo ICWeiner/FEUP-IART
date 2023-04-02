@@ -3,10 +3,12 @@ from piece import Piece
 from macros import TILESIZE
 import time
 
-class Board:
+class Board: #class representing a game board
     def __init__(self, rows, cols):
         self.rows = rows
         self.cols = cols
+
+        self.pieces = {}
 
         self.board = []
         for y in range(self.cols):
@@ -14,18 +16,91 @@ class Board:
             for x in range(self.rows):
                 self.board[y].append(None)
 
-        self.board[0][0] = Piece('red', '■', 0, 0)
-        self.board[1][0] = Piece('red', '■', 1, 0)
-        self.board[1][1] = Piece('red', '■', 1, 1)
-        self.board[0][1] = Piece('green', '■', 0, 1)
-        self.board[0][3] = Piece('yellow', '■', 0, 3)
-        self.board[2][2] = Piece('green', '■', 2, 2)
-        self.board[2][3] = Piece('green', '■', 2, 3)
-        self.board[3][2] = Piece('green', '■', 3, 2)
-        self.board[3][3] = Piece('red', '■', 3, 3)
+        if (rows < 5 and cols < 5):
+            self.add_piece('red',3,3) #sus
+            self.add_piece('red',0,0)
+            self.add_piece('red',1,0)
+            self.add_piece('red',1,1)
+            self.add_piece('green',0,1)
+            self.add_piece('yellow',0,3)
+            self.add_piece('green',2,2)
+            self.add_piece('green',2,3)
+            self.add_piece('green',3,2)
+
+        else:
+            self.add_piece('red',0,0)
+            self.add_piece('green',0,2)
+            self.add_piece('blue',0,4)
+            self.add_piece('blue',1,5)
+            self.add_piece('blue',0,5)
+            self.add_piece('yellow',2,1)
+            self.add_piece('red',2,3)
+            self.add_piece('green',2,5)
+            self.add_piece('blue',4,0)
+            self.add_piece('yellow',4,2)
+            self.add_piece('yellow',0,2)
+            self.add_piece('yellow',0,3)
+            self.add_piece('red',4,4)
+            self.add_piece('red',4,3)
+            self.add_piece('red',5,3)
+            self.add_piece('green',4,5)
+            
+            '''
+            💀 not smart enough for this one in useful time, if any time
+            self.add_piece('blue',0,0)
+            self.add_piece('blue',0,1)
+            self.add_piece('green',0,4)
+            self.add_piece('red',1,0)
+            self.add_piece('red',1,1)
+            self.add_piece('red',1,2)
+            self.add_piece('red',1,3)
+            self.add_piece('red',2,0)
+            self.add_piece('red',2,1)
+            self.add_piece('red',2,2)
+            self.add_piece('red',2,3)
+            self.add_piece('red',3,0)
+            self.add_piece('red',3,1)
+            self.add_piece('red',3,2)
+            self.add_piece('red',3,3)
+            self.add_piece('green',4,2)
+            self.add_piece('blue',4,3)
+            self.add_piece('blue',3,4)
+            💀
+            '''
+    
+    def __eq__(self, other):
+        if isinstance(other, Board):
+            for y in range(self.cols):
+                for x in range(self.rows):
+                    if self.board[y][x] != other.board[y][x]:
+                        return False
+            return True
+        return False
+
+    def __hash__(self):
+        rows = [tuple(row) for row in self.board]
+        return hash(tuple(rows))
+    
+    def __str__(self):
+        res = ""
+        for y in range(self.rows):
+            for x in range(self.cols):
+                res += str(self.board[y][x]) + " "
+            res += "\n"
+        return res
+    
+    def add_piece(self,color,x,y):
+        piece = Piece(color,x,y)
+        self.board[x][y] = piece
+        if piece:
+            if piece.color not in self.pieces:
+                #self.pieces[piece.color] = set()
+                self.pieces[piece.color]=1
+            else:
+                self.pieces[piece.color]+=1
 
 
-    def draw(self, screen, count, start_time):
+    def draw(self, screen, count, start_time=None):
         board_surf = pygame.Surface((TILESIZE * self.rows, TILESIZE * self.cols))
 
         for y in range(self.cols):
@@ -43,12 +118,13 @@ class Board:
         screen.blit(s1, s1_rect)
 
         #Time
-        elapsed_time = time.time() - start_time
-        timer_text = font.render("Time: {:.2f}s".format(elapsed_time), True, (255, 255, 255))
-        screen.blit(timer_text, (screen.get_width() - timer_text.get_width() - 20, screen.get_height() - timer_text.get_height() - 30))
+        if start_time is not None:
+            elapsed_time = time.time() - start_time
+            timer_text = font.render("Time: {:.2f}s".format(elapsed_time), True, (255, 255, 255))
+            screen.blit(timer_text, (screen.get_width() - timer_text.get_width() - 20, screen.get_height() - timer_text.get_height() - 30))
     
 
-    def draw_pieces(self, screen, font, selected_piece):
+    def draw_pieces(self, screen, font, selected_piece=None):
         sx, sy = None, None
         selected = False
         if selected_piece:
@@ -58,10 +134,10 @@ class Board:
             for x in range(self.rows): 
                 piece = self.board[y][x]
                 if piece:
-                    selected = x == sx and y == sy
+                    if selected_piece: selected = x == sx and y == sy
                     piece.draw(screen, font, selected)
-
-
+    
+    
     def verify_position(self, new_x, new_y, old_x, old_y):
         if new_x < 0 or new_x >= self.cols or new_y < 0 or new_y >= self.rows:
             return False
@@ -73,7 +149,7 @@ class Board:
 
 
     def set_position(self, drop_pos, selected_piece):
-        if not drop_pos or not selected_piece: return False
+        if not drop_pos or drop_pos[0] is None or drop_pos[1] is None or not selected_piece: return False
         
         new_x, new_y = drop_pos
         piece, old_x, old_y = selected_piece
@@ -84,13 +160,13 @@ class Board:
             self.set_square(connected_piece.y, connected_piece.x, None)
 
         for connected_piece in connected_pieces:
-            if not self.verify_position(connected_piece.x + new_x - old_x, connected_piece.y + new_y - old_y, connected_piece.x, connected_piece.y):
-                for old_connected_piece in old_connected_pieces:
-                    self.set_square(old_connected_piece.y, old_connected_piece.x, old_connected_piece)
-                return False
+                if not self.verify_position(connected_piece.x + new_x - old_x, connected_piece.y + new_y - old_y, connected_piece.x, connected_piece.y):
+                    for old_connected_piece in old_connected_pieces:
+                        self.set_square(old_connected_piece.y, old_connected_piece.x, old_connected_piece)
+                    return False
 
-        for connected_piece in connected_pieces:    
-            self.set_square(connected_piece.y + new_y - old_y, connected_piece.x + new_x - old_x, connected_piece)
+        for connected_piece in connected_pieces:  
+                self.set_square(connected_piece.y + new_y - old_y, connected_piece.x + new_x - old_x, connected_piece)
         return True
     
 
@@ -104,7 +180,9 @@ class Board:
             piece.set_piece(y,x)
             
 
-    def goal_state(self): #testar melhor!
+################################## Goal
+
+    def goal_state(self):
         pieces = {}
         for y in range(self.rows):
             for x in range(self.cols):
@@ -129,17 +207,17 @@ class Board:
         return True
 
 
-    def draw_Goal(self, screen, win):
-        font = pygame.font.SysFont('Arial', TILESIZE//2)
+    def draw_Goal(self, screen, win, score=0):
+        font = pygame.font.SysFont('Arial', TILESIZE//3)
         if win:
-            s1 = font.render("You Won! :)" , True, pygame.Color('white'))
+            s1 = font.render("You Won! :) " + "Score: " + str(score), True, pygame.Color('white'))
         else:
-            s1 = font.render("Game Over! :(" , True, pygame.Color('white')) #TODO add why (moves or time)
+            s1 = font.render("Game Over! :( " + "Score: " + str(score), True, pygame.Color('white')) #TODO add why (moves or time)
 
         s1_rect = s1.get_rect()
         s1_rect.center = screen.get_rect().center
         screen.blit(s1, s1_rect)
-        pygame.display.update()     
+        pygame.display.update()
 
 
 ##################################
@@ -162,7 +240,7 @@ class Board:
                 pygame.draw.rect(screen, (255, 0, 0, 50), rect, 2)  #FIXME fix color
     
 
-    def draw_drag(self, screen, selected_piece, font):
+    def draw_drag(self, screen, font, selected_piece):
         if selected_piece:
             piece, x, y = self.get_square_under_mouse()
             if x != None:
@@ -170,8 +248,8 @@ class Board:
                 isValid = self.verify_position(x, y, selected_piece[0].x, selected_piece[0].y)
                 pygame.draw.rect(screen, (0, 255, 0, 50) if isValid else pygame.Color('red'), rect, 2)  #FIXME fix color
 
-            s1 = font.render(selected_piece[0].type, True, pygame.Color(selected_piece[0].color))
-            s2 = font.render(selected_piece[0].type, True, pygame.Color('darkgrey'))
+            s1 = font.render('■', True, pygame.Color(selected_piece[0].color))
+            s2 = font.render('■', True, pygame.Color('darkgrey'))
             pos = pygame.Vector2(pygame.mouse.get_pos())
             screen.blit(s2, s2.get_rect(center=pos + (1, 1)))
             screen.blit(s1, s1.get_rect(center=pos))
