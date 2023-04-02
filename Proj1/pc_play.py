@@ -2,6 +2,7 @@ import pygame
 from queue import PriorityQueue
 from macros import TILESIZE
 from os import sys
+import time
 
 class PCPlay: #class responsible for showcasing the solution for the various algorithms
 
@@ -11,14 +12,16 @@ class PCPlay: #class responsible for showcasing the solution for the various alg
 
 
     def bfs(self):
+        print("BFS")
         queue = [self.initial_state]
         visited = set() # to avoid visiting the same state twice
-
+        start_time = time.time()
         while queue:
-            print("queue size " + str(len(queue)))
+            #print("queue size " + str(len(queue)))
             state = queue.pop(0)    # get the first state from the queue
             visited.add(state)  # add the state to the visited set
             if state.board.goal_state():
+                print(time.time()-start_time)
                 return state.move_history
 
             for child in state.children():
@@ -29,14 +32,16 @@ class PCPlay: #class responsible for showcasing the solution for the various alg
 
 
     def dfs(self):
+        print("DFS")
         stack = [self.initial_state]
         visited = set()
-
+        start_time = time.time()
         while stack:
-            print("stack size " + str(len(stack)))
+            #print("stack size " + str(len(stack)))
             state = stack.pop(0)
             visited.add(state)
             if state.board.goal_state():
+                print(time.time()-start_time)
                 return state.move_history
 
             for child in reversed(state.children()):  # traverse children in reverse order
@@ -47,7 +52,7 @@ class PCPlay: #class responsible for showcasing the solution for the various alg
 
 
     def greedy_search(self, heuristic="manhattan"): #for heuristic write manhattan or colors
-
+        print("Greedy with " + heuristic + " heuristic")
         queue = PriorityQueue()
 
         if heuristic == "color":
@@ -56,9 +61,11 @@ class PCPlay: #class responsible for showcasing the solution for the various alg
             queue.put((self.initial_state.manhattan_distance_heuristic(), self.initial_state))
 
         came_from = {}
+        start_time = time.time()
         while not queue.empty():
             state = queue.get()[1]
             if state.board.goal_state():
+                print(time.time()-start_time)
                 return state.move_history
             for child in state.children():
                 if child.id not in came_from:
@@ -72,6 +79,7 @@ class PCPlay: #class responsible for showcasing the solution for the various alg
 
 
     def a_star_search(self, heuristic="manhattan"):
+        print("A* with " + heuristic + " heuristic")
         queue = PriorityQueue()
 
         if heuristic == "color":
@@ -82,11 +90,13 @@ class PCPlay: #class responsible for showcasing the solution for the various alg
         came_from = {}
         cost_so_far = {}
         cost_so_far[self.initial_state.id] = 0  # Set cost of initial state to zero
+        start_time = time.time()
         while not queue.empty():
             state = queue.get()[1]
             #print(type(state))
 
             if state.board.goal_state():
+                print(time.time()-start_time)
                 return state.move_history
 
             for child in state.children():
@@ -121,7 +131,7 @@ class PCPlay: #class responsible for showcasing the solution for the various alg
             
                 if e.type == pygame.MOUSEBUTTONDOWN:
                     if button1_rect.collidepoint(pygame.mouse.get_pos()):
-                        print("Button 1 clicked!")
+                        #print("Button 1 clicked!")
                         self.selected_option = 0
                     #elif button2_rect.collidepoint(pygame.mouse.get_pos()):
                         #print("Button 2 clicked!")

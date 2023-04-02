@@ -188,12 +188,12 @@ class Board: #class representing a game board
         return True
 
 
-    def draw_Goal(self, screen, win):
-        font = pygame.font.SysFont('Arial', TILESIZE//2)
+    def draw_Goal(self, screen, win, score=0):
+        font = pygame.font.SysFont('Arial', TILESIZE//3)
         if win:
-            s1 = font.render("You Won! :)" , True, pygame.Color('white'))
+            s1 = font.render("You Won! :) " + "Score: " + str(score), True, pygame.Color('white'))
         else:
-            s1 = font.render("Game Over! :(" , True, pygame.Color('white')) #TODO add why (moves or time)
+            s1 = font.render("Game Over! :( " + "Score: " + str(score), True, pygame.Color('white')) #TODO add why (moves or time)
 
         s1_rect = s1.get_rect()
         s1_rect.center = screen.get_rect().center

@@ -1,10 +1,11 @@
+
 import pygame
 from board import Board
 from game_state import GameState
 from menu import Menu
 from macros import *
-import time
 from pc_play import PCPlay
+import time
 
 # 💀💀💀💀💀💀💀💀💀💀💀💀💀💀💀💀💀💀💀💀💀💀💀💀💀💀💀💀💀💀💀💀💀💀💀
 # 💀💀💀💀💀💀💀💀💀💀💀💀💀💀💀💀💀💀💀💀💀💀💀💀💀💀💀💀💀💀💀💀💀💀💀
@@ -33,6 +34,7 @@ def main():
     menu3 = Menu(SCREEN_SIZE_LVL2,['Manhattan','Colour Cluster','Quit'])
     menu2.isOpen = False
     menu3.isOpen = False
+    score = 0
 
     clock = pygame.time.Clock()
     while True:
@@ -63,7 +65,7 @@ def main():
                     piece = None
                     selected_piece = None
                     drop_pos = None
-                    count = 0
+                    moves = 0
                     start_time = time.time()
                     mode = "UserLvl1" if menu1.selected_option == 0 else "UserLvl2"
                     menu2.isOpen = False
@@ -110,7 +112,9 @@ def main():
                     elif menu1.selected_option == 1:
                             pc_play = PCPlay(GameState(Board(LVL2_ROWS,LVL2_COLS)))
                             screen = pygame.display.set_mode((SCREEN_SIZE_LVL2))
+
                     draw_string(screen,"Loading...",TILESIZE//2)
+
                     if menu2.selected_option == 3:
                         if menu3.selected_option == 0:
                             pc_play.draw(pc_play.a_star_search(),screen,font)
@@ -136,7 +140,7 @@ def main():
                     if e.type == pygame.MOUSEBUTTONUP:
                         set = board.set_position(drop_pos, selected_piece)
                         if set:
-                            count += 1
+                            moves += 1
                         selected_piece = None
                         drop_pos = None
 
@@ -153,15 +157,16 @@ def main():
             menu2.draw(screen)
         elif menu3.isOpen:
             menu3.draw(screen)
-        elif mode == "UserLvl1" or mode == "UserLvl2":
+        elif mode == "UserLvl1" or mode == "UserLvl2" or mode == "Goal":
             if board.goal_state():
-                board.draw_Goal(screen,True)
-            elif mode == "UserLvl1" and (count > 10 or time.time()-start_time > 30): #TODO change this later for different levels
-                board.draw_Goal(screen,False)
-            elif mode == "UserLvl2" and (count > 30 or time.time()-start_time > 80):
+                if mode != "Goal": score = int(((500-moves)+(500-(time.time()-start_time)*20))) if score >= 0 else 0
+                board.draw_Goal(screen,True,score)
+                mode = "Goal"
+            elif (mode == "UserLvl1" and (moves > 10 or time.time()-start_time > 30) or
+                  mode == "UserLvl2" and (moves > 30 or time.time()-start_time > 80)):
                 board.draw_Goal(screen,False)
             else:
-                board.draw(screen, count, start_time)
+                board.draw(screen, moves, start_time)
                 board.draw_pieces(screen, font, selected_piece)
                 piece, x, y = board.get_square_under_mouse()
                 board.draw_selector(screen, piece)

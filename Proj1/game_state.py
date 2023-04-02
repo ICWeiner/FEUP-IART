@@ -34,7 +34,7 @@ class GameState: #class that represents a game state and its various properties
         return sum(distances)   
 
 
-    def color_clusters_heuristic(self): #calculates the minimum distance between clusters of different colors,
+    def color_clusters_heuristic(self): #calculates the minimum distance between clusters of different colors
         clusters = {}
         for y in range(self.board.cols):
             for x in range(self.board.rows):
@@ -125,7 +125,7 @@ class GameState: #class that represents a game state and its various properties
         if moved:
             self.start_pos = (self.start_pos[0],self.start_pos[1] - 1)
             self.move_history.append(deepcopy(self.board))
-        print("Up " + str(moved))
+        #print("Up " + str(moved))
         return moved
 
 
@@ -138,7 +138,7 @@ class GameState: #class that represents a game state and its various properties
         if moved:
             self.start_pos = (self.start_pos[0],self.start_pos[1] + 1)
             self.move_history.append(deepcopy(self.board))
-        print("Down " + str(moved))
+        #print("Down " + str(moved))
         return moved
 
 
@@ -151,7 +151,7 @@ class GameState: #class that represents a game state and its various properties
         if moved:
             self.start_pos = (self.start_pos[0] - 1,self.start_pos[1])
             self.move_history.append(deepcopy(self.board))
-        print("Left " + str(moved))
+        #print("Left " + str(moved))
         return moved
 
 
@@ -164,5 +164,5 @@ class GameState: #class that represents a game state and its various properties
         if moved:
             self.start_pos = (self.start_pos[0] + 1,self.start_pos[1])
             self.move_history.append(deepcopy(self.board))
-        print("Right " + str(moved))
+        #print("Right " + str(moved))
         return moved
