@@ -2,9 +2,9 @@ import pygame
 from macros import TILESIZE
 
 class Menu:
-    def __init__(self, screen_size):
+    def __init__(self, screen_size, options):
         self.font = pygame.font.SysFont('Arial', TILESIZE//2)
-        self.options = ['4x4 BFS','4x4 DFS','4x4 A* Manhattan','4x4 Greedy Manhattan','4x4 A* Color Cluster','4x4 Greedy Color Cluster','6x6 BFS','6x6 DFS','6x6 A* Manhattan','6x6 Greedy Manhattan','6x6 A* Colour Cluster','6x6 Greedy Color Cluster', 'New Game 4x4','New Game 6x6','Quit']
+        self.options = options
         self.labels = [self.font.render(option, True, (255, 255, 255)) for option in self.options]
         self.width = max(label.get_width() for label in self.labels)
         self.height = len(self.options) * self.font.get_height() + 100

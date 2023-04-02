@@ -27,8 +27,12 @@ def main():
     pygame.init()
     font = pygame.font.SysFont('Arial', TILESIZE)
     pygame.display.set_caption('Cohesion')
-    screen = pygame.display.set_mode((MENU_SCREEN_SIZE))
-    menu = Menu(MENU_SCREEN_SIZE)
+    screen = pygame.display.set_mode((SCREEN_SIZE_LVL2))
+    menu1 = Menu(SCREEN_SIZE_LVL2,['New Game 4x4','New Game 6x6','Quit'])
+    menu2 = Menu(SCREEN_SIZE_LVL2,['Play','BFS','DFS','A*','Greedy','Quit'])
+    menu3 = Menu(SCREEN_SIZE_LVL2,['Manhattan','Colour Cluster','Quit'])
+    menu2.isOpen = False
+    menu3.isOpen = False
 
     clock = pygame.time.Clock()
     while True:
@@ -37,51 +41,91 @@ def main():
             if e.type == pygame.QUIT:
                 return
 
-            if menu.isOpen:
-                menu.handle_events(events)
-                if menu.selected_option == 14:
+            elif menu1.isOpen:
+                menu1.handle_events(events)
+                if menu1.selected_option == 2:
                     return
                 
-                elif menu.selected_option == 12 or menu.selected_option == 13:
-                    #print(menu.selected_option)
-                    board = Board(LVL1_ROWS,LVL1_COLS) if menu.selected_option == 12 else Board(LVL2_ROWS,LVL2_COLS)
-                    screen = pygame.display.set_mode((SCREEN_SIZE_LVL1)) if menu.selected_option == 12 else pygame.display.set_mode((SCREEN_SIZE_LVL2))
+                elif menu1.selected_option is not None:
+                    board = Board(LVL1_ROWS,LVL1_COLS) if menu1.selected_option == 0 else Board(LVL2_ROWS,LVL2_COLS)
+                    menu1.isOpen = False
+                    menu2.isOpen = True
+                    events = []
+
+            elif menu2.isOpen:
+                menu2.handle_events(events)
+
+                if menu2.selected_option == 5:
+                    return
+                
+                elif menu2.selected_option == 0:
+                    screen = pygame.display.set_mode((SCREEN_SIZE_LVL1)) if menu1.selected_option == 0 else pygame.display.set_mode((SCREEN_SIZE_LVL2))
                     piece = None
                     selected_piece = None
                     drop_pos = None
                     count = 0
                     start_time = time.time()
-                    mode = "UserLvl1" if menu.selected_option == 8 else "UserLvl2"
-                    menu.isOpen = False
+                    mode = "UserLvl1" if menu1.selected_option == 0 else "UserLvl2"
+                    menu2.isOpen = False
+                    menu1.selected_option = None
+                    menu2.selected_option = None
+                
+                elif menu2.selected_option is not None:
+                    if menu2.selected_option == 3 or menu2.selected_option == 4:
+                        menu3.isOpen = True
+                        events = []
 
-                elif menu.selected_option is not None:
-                    #print(menu.selected_option)
-                    if menu.selected_option < 6:
-                        pc_play = PCPlay(GameState(Board(LVL1_ROWS,LVL1_COLS)))
-                        screen = pygame.display.set_mode((SCREEN_SIZE_LVL1))
                     else:
-                        pc_play = PCPlay(GameState(Board(LVL2_ROWS,LVL2_COLS)))
-                        screen = pygame.display.set_mode((SCREEN_SIZE_LVL2))
+                        if menu1.selected_option == 0:
+                            pc_play = PCPlay(GameState(Board(LVL1_ROWS,LVL1_COLS)))
+                            screen = pygame.display.set_mode((SCREEN_SIZE_LVL1))
 
-                    draw_string(screen,"Loading...",TILESIZE//2)
-                    
-                    if menu.selected_option == 0 or menu.selected_option == 6:
-                        pc_play.draw(pc_play.bfs(),screen,font)
-                    elif menu.selected_option == 1 or menu.selected_option == 7:
-                        pc_play.draw(pc_play.dfs(),screen,font)
-                    elif menu.selected_option == 2 or menu.selected_option == 8:
-                        pc_play.draw(pc_play.a_star_search(),screen,font)
-                    elif menu.selected_option == 3 or menu.selected_option == 9:
-                        pc_play.draw(pc_play.greedy_search(),screen,font)
-                    elif menu.selected_option == 4 or menu.selected_option == 10:
-                        pc_play.draw(pc_play.a_star_search("color"),screen,font)
-                    elif menu.selected_option == 5 or menu.selected_option == 11:
-                        pc_play.draw(pc_play.greedy_search("color"),screen,font)
+                        elif menu1.selected_option == 1:
+                            pc_play = PCPlay(GameState(Board(LVL2_ROWS,LVL2_COLS)))
+                            screen = pygame.display.set_mode((SCREEN_SIZE_LVL2))
 
+                        draw_string(screen,"Loading...",TILESIZE//2)
+
+                        if menu2.selected_option == 1:
+                            pc_play.draw(pc_play.bfs(),screen,font)
+
+                        elif menu2.selected_option == 2:
+                            pc_play.draw(pc_play.dfs(),screen,font)
+
+                        menu1.selected_option = None
+                        menu2.selected_option = None
+                    menu2.isOpen = False
                     mode = "PC"
-                    menu.isOpen = False
-                    
-                menu.selected_option = None
+
+            elif menu3.isOpen:
+                menu3.handle_events(events)
+                if menu3.selected_option == 2:
+                    return
+                
+                elif menu3.selected_option is not None:
+                    if menu1.selected_option == 0:
+                            pc_play = PCPlay(GameState(Board(LVL1_ROWS,LVL1_COLS)))
+                            screen = pygame.display.set_mode((SCREEN_SIZE_LVL1))
+
+                    elif menu1.selected_option == 1:
+                            pc_play = PCPlay(GameState(Board(LVL2_ROWS,LVL2_COLS)))
+                            screen = pygame.display.set_mode((SCREEN_SIZE_LVL2))
+                    draw_string(screen,"Loading...",TILESIZE//2)
+                    if menu2.selected_option == 3:
+                        if menu3.selected_option == 0:
+                            pc_play.draw(pc_play.a_star_search(),screen,font)
+                        else:
+                            pc_play.draw(pc_play.a_star_search("color"),screen,font)
+                    else:
+                        if menu2.selected_option == 4:
+                            if menu3.selected_option == 0:
+                                pc_play.draw(pc_play.greedy_search(),screen,font)
+                            else:
+                                pc_play.draw(pc_play.greedy_search("color"),screen,font)
+                    menu3.isOpen = False
+                    menu2.selected_option = None
+                    menu1.selected_option = None
+                menu3.selected_option = None
 
             else:
                 if mode == "UserLvl1" or mode == "UserLvl2":
@@ -98,13 +142,17 @@ def main():
 
                 if e.type == pygame.KEYDOWN:
                     if e.key == pygame.K_ESCAPE:
-                        screen = pygame.display.set_mode((MENU_SCREEN_SIZE))
-                        menu.selected_option = None
-                        menu.isOpen = True
+                        screen = pygame.display.set_mode((SCREEN_SIZE_LVL2))
+                        menu1.selected_option = None
+                        menu1.isOpen = True
         
         screen.fill((0, 0, 0))
-        if menu.isOpen:
-            menu.draw(screen)
+        if menu1.isOpen:
+            menu1.draw(screen)
+        elif menu2.isOpen:
+            menu2.draw(screen)
+        elif menu3.isOpen:
+            menu3.draw(screen)
         elif mode == "UserLvl1" or mode == "UserLvl2":
             if board.goal_state():
                 board.draw_Goal(screen,True)
