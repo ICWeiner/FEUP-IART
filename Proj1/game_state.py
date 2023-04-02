@@ -59,7 +59,6 @@ class GameState: #class that represents a game state and its various properties
 
         return cost
 
-    
 
     def get_cost_so_far(self, pos):
         return self.cost_so_far.get(pos, float('inf'))  # Return infinity if pos has not been visited yet

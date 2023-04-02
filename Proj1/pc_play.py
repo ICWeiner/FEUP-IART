@@ -1,4 +1,5 @@
 import pygame
+import heapq
 from queue import PriorityQueue
 from macros import TILESIZE
 from os import sys
@@ -48,6 +49,47 @@ class PCPlay: #class responsible for showcasing the solution for the various alg
                 if child not in visited:
                     stack.append(child)
 
+        return None
+
+
+    def iterative_deepening_search(self):
+        def depth_limited_search(state, depth):
+            if state.board.goal_state():
+                return state.move_history
+            if depth == 0:
+                return None
+            for child in state.children():
+                result = depth_limited_search(child, depth-1)
+                if result is not None:
+                    return result
+            return None
+
+        print("Iterative Deepening")
+        start_time = time.time()
+        max_depth = 6 # max depth to search
+        for depth in range(1, max_depth+1):
+            result = depth_limited_search(self.initial_state, depth)
+            if result is not None:
+                print(time.time()-start_time)
+                return result
+        return None
+
+
+    def uniform_cost_search(self):
+        print("Uniform Cost")
+        queue = [(0, self.initial_state)]
+        visited = set()
+        start_time = time.time()
+        while queue:
+            priority, state = heapq.heappop(queue)
+            if state.board.goal_state():
+                print(time.time()-start_time)
+                return state.move_history
+            visited.add(state.id)
+            for child in state.children():
+                if child.id not in visited:
+                    child_priority = priority + child.cost_so_far
+                    heapq.heappush(queue, (child_priority, child))
         return None
 
 

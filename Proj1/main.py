@@ -30,8 +30,8 @@ def main():
     pygame.display.set_caption('Cohesion')
     screen = pygame.display.set_mode((SCREEN_SIZE_LVL2))
     menu1 = Menu(SCREEN_SIZE_LVL2,['New Game 4x4','New Game 6x6','Quit'])
-    menu2 = Menu(SCREEN_SIZE_LVL2,['Play','BFS','DFS','A*','Greedy','Quit'])
-    menu3 = Menu(SCREEN_SIZE_LVL2,['Manhattan','Colour Cluster','Quit'])
+    menu2 = Menu(SCREEN_SIZE_LVL2,['Play','BFS','DFS','Uniform Cost','Iterative Deepening','A*','Greedy','Quit'])
+    menu3 = Menu(SCREEN_SIZE_LVL2,['Manhattan','Color Cluster','Quit'])
     menu2.isOpen = False
     menu3.isOpen = False
     score = 0
@@ -57,7 +57,7 @@ def main():
             elif menu2.isOpen:
                 menu2.handle_events(events)
 
-                if menu2.selected_option == 5:
+                if menu2.selected_option == 7:
                     return
                 
                 elif menu2.selected_option == 0:
@@ -73,7 +73,7 @@ def main():
                     menu2.selected_option = None
                 
                 elif menu2.selected_option is not None:
-                    if menu2.selected_option == 3 or menu2.selected_option == 4:
+                    if menu2.selected_option == 5 or menu2.selected_option == 6:
                         menu3.isOpen = True
                         events = []
 
@@ -93,6 +93,12 @@ def main():
 
                         elif menu2.selected_option == 2:
                             pc_play.draw(pc_play.dfs(),screen,font)
+
+                        elif menu2.selected_option == 3:
+                            pc_play.draw(pc_play.uniform_cost_search(),screen,font)
+                        
+                        elif menu2.selected_option == 4:
+                            pc_play.draw(pc_play.iterative_deepening_search(),screen,font)
 
                         menu1.selected_option = None
                         menu2.selected_option = None
@@ -115,13 +121,13 @@ def main():
 
                     draw_string(screen,"Loading...",TILESIZE//2)
 
-                    if menu2.selected_option == 3:
+                    if menu2.selected_option == 5:
                         if menu3.selected_option == 0:
                             pc_play.draw(pc_play.a_star_search(),screen,font)
                         else:
                             pc_play.draw(pc_play.a_star_search("color"),screen,font)
                     else:
-                        if menu2.selected_option == 4:
+                        if menu2.selected_option == 6:
                             if menu3.selected_option == 0:
                                 pc_play.draw(pc_play.greedy_search(),screen,font)
                             else:
