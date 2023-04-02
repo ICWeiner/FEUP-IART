@@ -1,0 +1,43 @@
+pygame 2.2.0 (SDL 2.0.22, Python 3.10.6)
+Hello from the pygame community. https://www.pygame.org/contribute.html
+A* with color heuristic
+35.65771460533142
+Filename: /home/danielatomas/Documents/FEUP-IART/Proj1/pc_play.py
+
+Line #    Mem usage    Increment  Occurrences   Line Contents
+=============================================================
+   128    128.1 MiB    128.1 MiB           1       @profile
+   129                                             def a_star_search(self, heuristic="manhattan"):
+   130    128.1 MiB      0.0 MiB           1           print("A* with " + heuristic + " heuristic")
+   131    128.1 MiB      0.0 MiB           1           queue = PriorityQueue()
+   132                                         
+   133    128.1 MiB      0.0 MiB           1           if heuristic == "color":
+   134    128.1 MiB      0.0 MiB           1               queue.put((self.initial_state.color_clusters_heuristic(), self.initial_state))
+   135                                                 else:
+   136                                                     queue.put((self.initial_state.manhattan_distance_heuristic(),self.initial_state))
+   137                                         
+   138    128.1 MiB      0.0 MiB           1           came_from = {}
+   139    128.1 MiB      0.0 MiB           1           cost_so_far = {}
+   140    128.1 MiB      0.0 MiB           1           cost_so_far[self.initial_state.id] = 0  # Set cost of initial state to zero
+   141    128.1 MiB      0.0 MiB           1           start_time = time.time()
+   142    141.5 MiB      0.0 MiB         564           while not queue.empty():
+   143    141.5 MiB      0.0 MiB         564               state = queue.get()[1]
+   144                                                     #print(type(state))
+   145                                         
+   146    141.5 MiB      0.0 MiB         564               if state.board.goal_state():
+   147    141.5 MiB      0.0 MiB           1                   print(time.time()-start_time)
+   148    141.5 MiB      0.0 MiB           1                   return state.move_history
+   149                                         
+   150    141.5 MiB     13.4 MiB        2379               for child in state.children():
+   151    141.5 MiB      0.0 MiB        1816                   new_cost = cost_so_far[state.id] + 1
+   152    141.5 MiB      0.0 MiB        1816                   if child.id not in cost_so_far or new_cost < cost_so_far[child.id]:
+   153    141.5 MiB      0.0 MiB        1816                       cost_so_far[child.id] = new_cost
+   154    141.5 MiB      0.0 MiB        1816                       if heuristic == "color":
+   155    141.5 MiB      0.0 MiB        1816                           priority = new_cost + child.color_clusters_heuristic()
+   156                                                             else:
+   157                                                                 priority = new_cost + child.manhattan_distance_heuristic()
+   158    141.5 MiB      0.0 MiB        1816                       queue.put((priority,child))
+   159    141.5 MiB      0.0 MiB        1816                       came_from[child.id] = state
+   160                                                 return came_from, cost_so_far
+
+

@@ -97,7 +97,7 @@ class PCPlay: #class responsible for showcasing the solution for the various alg
         return None
 
 
-    #@profile
+    @profile
     def greedy_search(self, heuristic="manhattan"): #for heuristic write manhattan or colors
         print("Greedy with " + heuristic + " heuristic")
         queue = PriorityQueue()
@@ -125,7 +125,7 @@ class PCPlay: #class responsible for showcasing the solution for the various alg
         return came_from
 
 
-    #@profile
+    @profile
     def a_star_search(self, heuristic="manhattan"):
         print("A* with " + heuristic + " heuristic")
         queue = PriorityQueue()

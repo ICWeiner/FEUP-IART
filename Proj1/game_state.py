@@ -29,7 +29,8 @@ class GameState: #class that represents a game state and its various properties
                     connected_pieces |= piece.get_connected_pieces(self.board)
                     for other_piece in color_pieces:
                         if other_piece not in connected_pieces:
-                            distance += abs(piece.x - other_piece.x) + abs(piece.y - other_piece.y)
+                            #distance += abs(piece.x - other_piece.x) + abs(piece.y - other_piece.y)
+                            distance += ((piece.x - other_piece.x) ** 2 + (piece.y - other_piece.y) ** 2) ** 0.5
             distances.append(distance)
         
         return sum(distances)   

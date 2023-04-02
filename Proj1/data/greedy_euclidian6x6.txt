@@ -1,0 +1,36 @@
+pygame 2.2.0 (SDL 2.0.22, Python 3.10.6)
+Hello from the pygame community. https://www.pygame.org/contribute.html
+Greedy with manhattan heuristic
+4.9227211475372314
+Filename: /home/danielatomas/Documents/FEUP-IART/Proj1/pc_play.py
+
+Line #    Mem usage    Increment  Occurrences   Line Contents
+=============================================================
+   100    131.7 MiB    131.7 MiB           1       @profile
+   101                                             def greedy_search(self, heuristic="manhattan"): #for heuristic write manhattan or colors
+   102    131.7 MiB      0.0 MiB           1           print("Greedy with " + heuristic + " heuristic")
+   103    131.7 MiB      0.0 MiB           1           queue = PriorityQueue()
+   104                                         
+   105    131.7 MiB      0.0 MiB           1           if heuristic == "color":
+   106                                                     queue.put((self.initial_state.color_clusters_heuristic(), self.initial_state))
+   107                                                 else:
+   108    131.7 MiB      0.0 MiB           1               queue.put((self.initial_state.manhattan_distance_heuristic(), self.initial_state))
+   109                                                 
+   110    131.7 MiB      0.0 MiB           1           came_from = {}
+   111    131.7 MiB      0.0 MiB           1           start_time = time.time()
+   112    134.0 MiB      0.0 MiB          53           while not queue.empty():
+   113    134.0 MiB      0.0 MiB          53               state = queue.get()[1]
+   114    134.0 MiB      0.0 MiB          53               if state.board.goal_state():
+   115    134.0 MiB      0.0 MiB           1                   print(time.time()-start_time)
+   116    134.0 MiB      0.0 MiB           1                   return state.move_history
+   117    134.0 MiB      1.8 MiB         236               for child in state.children():
+   118    134.0 MiB      0.0 MiB         184                   if child.id not in came_from:
+   119    134.0 MiB      0.0 MiB         184                       if heuristic == "color":
+   120                                                                 priority = child.color_clusters_heuristic()
+   121                                                             else:
+   122    134.0 MiB      0.5 MiB         184                           priority = child.manhattan_distance_heuristic()
+   123    134.0 MiB      0.0 MiB         184                       queue.put((priority, child))
+   124    134.0 MiB      0.0 MiB         184                       came_from[child.id] = state
+   125                                                 return came_from
+
+
