@@ -16,7 +16,7 @@ class Board: #class representing a game board
             for x in range(self.rows):
                 self.board[y].append(None)
 
-        if (rows < 6 and cols < 6):
+        if (rows < 5 and cols < 5):
             self.add_piece('red',3,3) #sus
             self.add_piece('red',0,0)
             self.add_piece('red',1,0)
@@ -44,8 +44,39 @@ class Board: #class representing a game board
             self.add_piece('red',4,3)
             self.add_piece('red',5,3)
             self.add_piece('green',4,5)
-
+            
+            '''
+            💀 not smart enough for this one in useful time, if any time
+            self.add_piece('blue',0,0)
+            self.add_piece('blue',0,1)
+            self.add_piece('green',0,4)
+            self.add_piece('red',1,0)
+            self.add_piece('red',1,1)
+            self.add_piece('red',1,2)
+            self.add_piece('red',1,3)
+            self.add_piece('red',2,0)
+            self.add_piece('red',2,1)
+            self.add_piece('red',2,2)
+            self.add_piece('red',2,3)
+            self.add_piece('red',3,0)
+            self.add_piece('red',3,1)
+            self.add_piece('red',3,2)
+            self.add_piece('red',3,3)
+            self.add_piece('green',4,2)
+            self.add_piece('blue',4,3)
+            self.add_piece('blue',3,4)
+            💀
+            '''
     
+    def __eq__(self, other):
+        if isinstance(other, Board):
+            for y in range(self.cols):
+                for x in range(self.rows):
+                    if self.board[y][x] != other.board[y][x]:
+                        return False
+            return True
+        return False
+
     def __hash__(self):
         rows = [tuple(row) for row in self.board]
         return hash(tuple(rows))
@@ -57,18 +88,6 @@ class Board: #class representing a game board
                 res += str(self.board[y][x]) + " "
             res += "\n"
         return res
-    
-    '''
-    def __str__ (self):
-        text=""
-        for y in range(self.board.cols):
-            for x in range(self.board.rows):
-                piece =self.board[y][x]
-                if piece:
-                    text.join(piece)
-        return text
-    '''
-
     
     def add_piece(self,color,x,y):
         piece = Piece(color,x,y)

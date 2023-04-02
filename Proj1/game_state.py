@@ -14,6 +14,7 @@ class GameState: #class that represents a game state and its various properties
         self.start_pos = start_pos
         self.id = id(self)
    
+   
     def manhattan_distance_heuristic(self): #calculates the total manhattan distance pieces of the same colour and ads them all
         distances = []
         colors = ['red', 'green', 'yellow', 'blue']

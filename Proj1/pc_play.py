@@ -4,6 +4,7 @@ from queue import PriorityQueue
 from macros import TILESIZE
 from os import sys
 import time
+from memory_profiler import profile
 
 class PCPlay: #class responsible for showcasing the solution for the various algorithms
 
@@ -12,6 +13,7 @@ class PCPlay: #class responsible for showcasing the solution for the various alg
         self.selected_option = None
 
 
+    #@profile
     def bfs(self):
         print("BFS")
         queue = [self.initial_state]
@@ -32,6 +34,7 @@ class PCPlay: #class responsible for showcasing the solution for the various alg
         return None 
 
 
+    #@profile
     def dfs(self):
         print("DFS")
         stack = [self.initial_state]
@@ -48,10 +51,10 @@ class PCPlay: #class responsible for showcasing the solution for the various alg
             for child in reversed(state.children()):  # traverse children in reverse order
                 if child not in visited:
                     stack.append(child)
-
         return None
 
 
+    #@profile
     def iterative_deepening_search(self):
         def depth_limited_search(state, depth):
             if state.board.goal_state():
@@ -66,7 +69,7 @@ class PCPlay: #class responsible for showcasing the solution for the various alg
 
         print("Iterative Deepening")
         start_time = time.time()
-        max_depth = 6 # max depth to search
+        max_depth = 10 # max depth to search
         for depth in range(1, max_depth+1):
             result = depth_limited_search(self.initial_state, depth)
             if result is not None:
@@ -75,6 +78,7 @@ class PCPlay: #class responsible for showcasing the solution for the various alg
         return None
 
 
+    #@profile
     def uniform_cost_search(self):
         print("Uniform Cost")
         queue = [(0, self.initial_state)]
@@ -93,6 +97,7 @@ class PCPlay: #class responsible for showcasing the solution for the various alg
         return None
 
 
+    #@profile
     def greedy_search(self, heuristic="manhattan"): #for heuristic write manhattan or colors
         print("Greedy with " + heuristic + " heuristic")
         queue = PriorityQueue()
@@ -101,7 +106,7 @@ class PCPlay: #class responsible for showcasing the solution for the various alg
             queue.put((self.initial_state.color_clusters_heuristic(), self.initial_state))
         else:
             queue.put((self.initial_state.manhattan_distance_heuristic(), self.initial_state))
-
+        
         came_from = {}
         start_time = time.time()
         while not queue.empty():
@@ -120,6 +125,7 @@ class PCPlay: #class responsible for showcasing the solution for the various alg
         return came_from
 
 
+    #@profile
     def a_star_search(self, heuristic="manhattan"):
         print("A* with " + heuristic + " heuristic")
         queue = PriorityQueue()

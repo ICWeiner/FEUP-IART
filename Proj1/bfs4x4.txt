@@ -1,0 +1,29 @@
+pygame 2.2.0 (SDL 2.0.22, Python 3.10.6)
+Hello from the pygame community. https://www.pygame.org/contribute.html
+BFS
+10.257222175598145
+Filename: /home/danielatomas/Documents/FEUP-IART/Proj1/pc_play.py
+
+Line #    Mem usage    Increment  Occurrences   Line Contents
+=============================================================
+    16    128.5 MiB    128.5 MiB           1       @profile
+    17                                             def bfs(self):
+    18    128.5 MiB      0.0 MiB           1           print("BFS")
+    19    128.5 MiB      0.0 MiB           1           queue = [self.initial_state]
+    20    128.5 MiB      0.0 MiB           1           visited = set() # to avoid visiting the same state twice
+    21    128.5 MiB      0.0 MiB           1           start_time = time.time()
+    22    131.6 MiB      0.0 MiB         187           while queue:
+    23                                                     #print("queue size " + str(len(queue)))
+    24    131.6 MiB      0.0 MiB         187               state = queue.pop(0)    # get the first state from the queue
+    25    131.6 MiB      0.0 MiB         187               visited.add(state)  # add the state to the visited set
+    26    131.6 MiB      0.0 MiB         187               if state.board.goal_state():
+    27    131.6 MiB      0.0 MiB           1                   print(time.time()-start_time)
+    28    131.6 MiB      0.0 MiB           1                   return state.move_history
+    29                                         
+    30    131.6 MiB      3.1 MiB         830               for child in state.children():
+    31    131.6 MiB      0.0 MiB         644                   if child not in visited:
+    32                                                             #print(child.board)
+    33    131.6 MiB      0.0 MiB         463                       queue.append(child) # add the child state to the queue
+    34                                                 return None 
+
+

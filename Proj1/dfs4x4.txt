@@ -1,0 +1,28 @@
+pygame 2.2.0 (SDL 2.0.22, Python 3.10.6)
+Hello from the pygame community. https://www.pygame.org/contribute.html
+DFS
+10.361956357955933
+Filename: /home/danielatomas/Documents/FEUP-IART/Proj1/pc_play.py
+
+Line #    Mem usage    Increment  Occurrences   Line Contents
+=============================================================
+    37    128.4 MiB    128.4 MiB           1       @profile
+    38                                             def dfs(self):
+    39    128.4 MiB      0.0 MiB           1           print("DFS")
+    40    128.4 MiB      0.0 MiB           1           stack = [self.initial_state]
+    41    128.4 MiB      0.0 MiB           1           visited = set()
+    42    128.4 MiB      0.0 MiB           1           start_time = time.time()
+    43    131.5 MiB      0.0 MiB         181           while stack:
+    44                                                     #print("stack size " + str(len(stack)))
+    45    131.5 MiB      0.0 MiB         181               state = stack.pop(0)
+    46    131.5 MiB      0.0 MiB         181               visited.add(state)
+    47    131.5 MiB      0.0 MiB         181               if state.board.goal_state():
+    48    131.5 MiB      0.0 MiB           1                   print(time.time()-start_time)
+    49    131.5 MiB      0.0 MiB           1                   return state.move_history
+    50                                         
+    51    131.5 MiB      3.1 MiB         804               for child in reversed(state.children()):  # traverse children in reverse order
+    52    131.5 MiB      0.0 MiB         624                   if child not in visited:
+    53    131.5 MiB      0.0 MiB         439                       stack.append(child)
+    54                                                 return None
+
+
