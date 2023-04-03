@@ -1,0 +1,32 @@
+pygame 2.3.0 (SDL 2.24.2, Python 3.10.6)
+Hello from the pygame community. https://www.pygame.org/contribute.html
+A* with manhattan heuristic
+0.3883802890777588
+Filename: /home/diogo/Documents/FEUP-IART/Proj1/pc_play.py
+
+Line #    Mem usage    Increment  Occurrences   Line Contents
+=============================================================
+   123    144.4 MiB    144.4 MiB           1       @profile
+   124                                             def a_star_search(self, heuristic="manhattan"):
+   125    144.4 MiB      0.0 MiB           1           print("A* with " + heuristic + " heuristic")
+   126    144.4 MiB      0.0 MiB           1           queue = PriorityQueue()
+   127                                         
+   128    144.4 MiB      0.0 MiB           1           self.initial_state.heuristic = heuristic
+   129    144.4 MiB      0.0 MiB           1           queue.put(self.initial_state)
+   130                                         
+   131    144.4 MiB      0.0 MiB           1           came_from = {}
+   132    144.4 MiB      0.0 MiB           1           start_time = time.time()
+   133    144.9 MiB      0.0 MiB          16           while not queue.empty():
+   134    144.9 MiB      0.3 MiB          16               state = queue.get()
+   135                                         
+   136                                         
+   137    144.9 MiB      0.0 MiB          16               if state.board.goal_state():
+   138    144.9 MiB      0.0 MiB           1                   print(time.time()-start_time)
+   139    144.9 MiB      0.0 MiB           1                   return state.move_history
+   140                                         
+   141    144.9 MiB      0.0 MiB          73               for child in state.children():
+   142    144.9 MiB      0.3 MiB          58                   queue.put(child)
+   143    144.9 MiB      0.0 MiB          58                   came_from[child.id] = state
+   144                                                 return None
+
+

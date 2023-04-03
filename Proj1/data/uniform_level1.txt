@@ -1,0 +1,27 @@
+pygame 2.3.0 (SDL 2.24.2, Python 3.10.6)
+Hello from the pygame community. https://www.pygame.org/contribute.html
+Uniform Cost
+9.669329643249512
+Filename: /home/diogo/Documents/FEUP-IART/Proj1/pc_play.py
+
+Line #    Mem usage    Increment  Occurrences   Line Contents
+=============================================================
+    81    143.3 MiB    143.3 MiB           1       @profile
+    82                                             def uniform_cost_search(self):
+    83    143.3 MiB      0.0 MiB           1           print("Uniform Cost")
+    84    143.3 MiB      0.0 MiB           1           queue = [(0, self.initial_state)]
+    85    143.3 MiB      0.0 MiB           1           visited = set()
+    86    143.3 MiB      0.0 MiB           1           start_time = time.time()
+    87    154.1 MiB      0.0 MiB         715           while queue:
+    88    154.1 MiB      0.0 MiB         715               state = heapq.heappop(queue)[1]
+    89    154.1 MiB      0.5 MiB         715               if state.board.goal_state():
+    90    154.1 MiB      0.0 MiB           1                   print(time.time()-start_time)
+    91    154.1 MiB      0.0 MiB           1                   return state.move_history
+    92    154.1 MiB      0.0 MiB         714               visited.add(state.id)
+    93    154.1 MiB     10.3 MiB        3541               for child in state.children():
+    94    154.1 MiB      0.0 MiB        2827                   if child.id not in visited:
+    95    154.1 MiB      0.0 MiB        2704                       child_priority = child.depth
+    96    154.1 MiB      0.0 MiB        2704                       heapq.heappush(queue, (child_priority, child))
+    97                                                 return None
+
+

@@ -1,0 +1,32 @@
+pygame 2.3.0 (SDL 2.24.2, Python 3.10.6)
+Hello from the pygame community. https://www.pygame.org/contribute.html
+Iterative Deepening
+2.010075092315674
+Filename: /home/diogo/Documents/FEUP-IART/Proj1/pc_play.py
+
+Line #    Mem usage    Increment  Occurrences   Line Contents
+=============================================================
+    57    143.3 MiB    143.3 MiB           1       @profile
+    58                                             def iterative_deepening_search(self):
+    59    143.5 MiB      0.0 MiB         623           def depth_limited_search(state, depth):
+    60    143.5 MiB      0.0 MiB         622               if state.board.goal_state():
+    61    143.5 MiB      0.0 MiB           1                   return state.move_history
+    62    143.5 MiB      0.0 MiB         621               if depth == 0:
+    63    143.5 MiB      0.0 MiB         465                   return None
+    64    143.5 MiB      0.3 MiB         768               for child in state.children():
+    65    143.5 MiB      0.0 MiB         617                   result = depth_limited_search(child, depth-1)
+    66    143.5 MiB      0.0 MiB         617                   if result is not None:
+    67    143.5 MiB      0.0 MiB           5                       return result
+    68    143.5 MiB      0.0 MiB         151               return None
+    69                                         
+    70    143.3 MiB      0.0 MiB           1           print("Iterative Deepening")
+    71    143.3 MiB      0.0 MiB           1           start_time = time.time()
+    72    143.3 MiB      0.0 MiB           1           max_depth = 20 # max depth to search TODO: this should depend on the level?
+    73    143.5 MiB      0.0 MiB           5           for depth in range(1, max_depth+1):
+    74    143.5 MiB      0.0 MiB           5               result = depth_limited_search(self.initial_state, depth)
+    75    143.5 MiB      0.0 MiB           5               if result is not None:
+    76    143.5 MiB      0.0 MiB           1                   print(time.time()-start_time)
+    77    143.5 MiB      0.0 MiB           1                   return result
+    78                                                 return None
+
+
