@@ -1,31 +1,32 @@
 pygame 2.3.0 (SDL 2.24.2, Python 3.10.6)
 Hello from the pygame community. https://www.pygame.org/contribute.html
 Greedy with manhattan heuristic
-0.09544968605041504
+0.09696292877197266
 Filename: /home/diogo/Documents/FEUP-IART/Proj1/pc_play.py
 
 Line #    Mem usage    Increment  Occurrences   Line Contents
 =============================================================
-   100    143.2 MiB    143.2 MiB           1       @profile
+   100    143.3 MiB    143.3 MiB           1       @profile
    101                                             def greedy_search(self, heuristic="manhattan"): # for heuristic write manhattan or colors
-   102    143.2 MiB      0.0 MiB           1           print("Greedy with " + heuristic + " heuristic")
-   103    143.2 MiB      0.0 MiB           1           queue = PriorityQueue()
+   102    143.3 MiB      0.0 MiB           1           print("Greedy with " + heuristic + " heuristic")
+   103    143.3 MiB      0.0 MiB           1           queue = PriorityQueue()
    104                                         
-   105    143.2 MiB      0.0 MiB           1           self.initial_state.heuristic = heuristic
-   106    143.2 MiB      0.0 MiB           1           queue.put(self.initial_state)
+   105    143.3 MiB      0.0 MiB           1           self.initial_state.heuristic = heuristic
+   106    143.3 MiB      0.0 MiB           1           queue.put(self.initial_state)
    107                                                 
-   108    143.2 MiB      0.0 MiB           1           came_from = {}
-   109    143.2 MiB      0.0 MiB           1           start_time = time.time()
-   110    143.4 MiB      0.0 MiB           6           while not queue.empty():
-   111    143.4 MiB      0.3 MiB           6               state = queue.get()
+   108    143.3 MiB      0.0 MiB           1           came_from = {}
+   109    143.3 MiB      0.0 MiB           1           start_time = time.time()
+   110    143.5 MiB      0.0 MiB           6           while not queue.empty():
+   111    143.5 MiB      0.0 MiB           6               state = queue.get()
    112                                         
-   113    143.4 MiB      0.0 MiB           6               if state.board.goal_state():
-   114    143.4 MiB      0.0 MiB           1                   print(time.time()-start_time)
-   115    143.4 MiB      0.0 MiB           1                   return state.move_history
-   116    143.4 MiB      0.0 MiB          25               for child in state.children():
-   117    143.4 MiB      0.0 MiB          20                   if child.id not in came_from:
-   118    143.4 MiB      0.0 MiB          20                       queue.put( child)
-   119    143.4 MiB      0.0 MiB          20                       came_from[child.id] = state
-   120                                                 return None
+   113    143.5 MiB      0.0 MiB           6               if state.board.goal_state():
+   114    143.5 MiB      0.0 MiB           1                   print(time.time()-start_time)
+   115    143.5 MiB      0.0 MiB           1                   return state.move_history
+   116    143.5 MiB      0.0 MiB          25               for child in state.children():
+   117    143.5 MiB      0.0 MiB          20                   if child.id not in came_from:
+   118    143.5 MiB      0.0 MiB          20                       child.search = "greedy"
+   119    143.5 MiB      0.3 MiB          20                       queue.put(child)
+   120    143.5 MiB      0.0 MiB          20                       came_from[child.id] = state
+   121                                                 return None
 
 
