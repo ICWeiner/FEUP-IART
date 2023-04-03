@@ -3,15 +3,15 @@ from itertools import combinations
 
 class GameState: #class that represents a game state and its various properties
 
-    def __init__(self, board, move_history = [], depth = 0, start_pos=(0,0), cost_so_far=0): #start_pos should match coordinates of an actual piece or else 💀
+    def __init__(self, board, move_history = [], depth = 0, start_pos=(0,0), heuristic=""): #start_pos should match coordinates of an actual piece or else 💀
         self.board = deepcopy(board)
         self.depth = depth #depth of current node, equals number of moves made in this particular state
         if (depth == 0):
             self.move_history = [] + move_history + [deepcopy(self.board)]#add first state to history
         else:
             self.move_history = [] + move_history
-        self.cost_so_far = cost_so_far
         self.start_pos = start_pos
+        self.heuristic = heuristic
         self.id = id(self)
    
    
@@ -29,8 +29,8 @@ class GameState: #class that represents a game state and its various properties
                     connected_pieces |= piece.get_connected_pieces(self.board)
                     for other_piece in color_pieces:
                         if other_piece not in connected_pieces:
-                            #distance += abs(piece.x - other_piece.x) + abs(piece.y - other_piece.y)
-                            distance += ((piece.x - other_piece.x) ** 2 + (piece.y - other_piece.y) ** 2) ** 0.5
+                            distance += abs(piece.x - other_piece.x) + abs(piece.y - other_piece.y)
+                            #distance += ((piece.x - other_piece.x) ** 2 + (piece.y - other_piece.y) ** 2) ** 0.5
             distances.append(distance)
         
         return sum(distances)   
@@ -60,16 +60,15 @@ class GameState: #class that represents a game state and its various properties
             cost += min_distance
 
         return cost
-
-
-    def get_cost_so_far(self, pos):
-        return self.cost_so_far.get(pos, float('inf'))  # Return infinity if pos has not been visited yet
-
-    def set_cost_so_far(self, pos, cost):
-        self.cost_so_far[pos] = cost
-
+    
     def __lt__(self, other):
-        return self.cost_so_far < other.cost_so_far
+        return self.f() < other.f()
+    
+    def f(self):
+         if self.heuristic == "manhattan": 
+            return self.depth + self.manhattan_distance_heuristic() #TODO: mudar para aceitar outras heuristicas
+         else:
+             return self.depth + self.color_clusters_heuristic()
 
     def __eq__(self, other):
         return self.board == other.board and self.start_pos == other.start_pos
@@ -88,7 +87,7 @@ class GameState: #class that represents a game state and its various properties
             child = func()
             if child is not None:
                 child.depth = self.depth + 1
-                child.cost_so_far = self.cost_so_far + 1 + child.manhattan_distance_heuristic()
+                child.heuristic = self.heuristic
                 children.append(child)
         return children
     

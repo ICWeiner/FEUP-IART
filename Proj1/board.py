@@ -4,10 +4,10 @@ from macros import TILESIZE
 import time
 
 class Board: #class representing a game board
-    def __init__(self, rows, cols):
+    def __init__(self, rows, cols, level):
         self.rows = rows
         self.cols = cols
-
+        self.level = level
         self.pieces = {}
 
         self.board = []
@@ -15,8 +15,14 @@ class Board: #class representing a game board
             self.board.append([])
             for x in range(self.rows):
                 self.board[y].append(None)
+        
+        if level == 1:
+            self.add_piece('red',0,0)
+            self.add_piece('red',3,0)
+            self.add_piece('red',0,3)
+            self.add_piece('red',3,3)
 
-        if (rows < 5 and cols < 5):
+        elif level == 2:
             self.add_piece('red',3,3) #sus
             self.add_piece('red',0,0)
             self.add_piece('red',1,0)
@@ -26,6 +32,13 @@ class Board: #class representing a game board
             self.add_piece('green',2,2)
             self.add_piece('green',2,3)
             self.add_piece('green',3,2)
+
+        elif level == 3:
+            self.add_piece('red',0,0)
+            self.add_piece('red',5,0)
+            self.add_piece('red',0,5)
+            self.add_piece('green',2,2)
+            self.add_piece('green',2,4)
 
         else:
             self.add_piece('red',0,0)
@@ -44,29 +57,6 @@ class Board: #class representing a game board
             self.add_piece('red',4,3)
             self.add_piece('red',5,3)
             self.add_piece('green',4,5)
-            
-            '''
-            💀 not smart enough for this one in useful time, if any time
-            self.add_piece('blue',0,0)
-            self.add_piece('blue',0,1)
-            self.add_piece('green',0,4)
-            self.add_piece('red',1,0)
-            self.add_piece('red',1,1)
-            self.add_piece('red',1,2)
-            self.add_piece('red',1,3)
-            self.add_piece('red',2,0)
-            self.add_piece('red',2,1)
-            self.add_piece('red',2,2)
-            self.add_piece('red',2,3)
-            self.add_piece('red',3,0)
-            self.add_piece('red',3,1)
-            self.add_piece('red',3,2)
-            self.add_piece('red',3,3)
-            self.add_piece('green',4,2)
-            self.add_piece('blue',4,3)
-            self.add_piece('blue',3,4)
-            💀
-            '''
     
     def __eq__(self, other):
         if isinstance(other, Board):
@@ -89,12 +79,12 @@ class Board: #class representing a game board
             res += "\n"
         return res
     
-    def add_piece(self,color,x,y):
+
+    def add_piece(self,color,x,y): # add piece to the board
         piece = Piece(color,x,y)
         self.board[x][y] = piece
         if piece:
             if piece.color not in self.pieces:
-                #self.pieces[piece.color] = set()
                 self.pieces[piece.color]=1
             else:
                 self.pieces[piece.color]+=1
@@ -138,7 +128,7 @@ class Board: #class representing a game board
                     piece.draw(screen, font, selected)
     
     
-    def verify_position(self, new_x, new_y, old_x, old_y):
+    def verify_position(self, new_x, new_y, old_x, old_y): #verfies if its possible to move to new coordinates
         if new_x < 0 or new_x >= self.cols or new_y < 0 or new_y >= self.rows:
             return False
         return not (self.get_square(new_y, new_x) is not None 
@@ -148,7 +138,7 @@ class Board: #class representing a game board
             )
 
 
-    def set_position(self, drop_pos, selected_piece):
+    def set_position(self, drop_pos, selected_piece): # move selected pieces to new coordinates
         if not drop_pos or drop_pos[0] is None or drop_pos[1] is None or not selected_piece: return False
         
         new_x, new_y = drop_pos
@@ -156,16 +146,17 @@ class Board: #class representing a game board
         connected_pieces = piece.get_connected_pieces(self)
         old_connected_pieces = set(connected_pieces)
 
-        for connected_piece in connected_pieces:
+        for connected_piece in connected_pieces: # remove selected pieces from the board
             self.set_square(connected_piece.y, connected_piece.x, None)
 
         for connected_piece in connected_pieces:
-                if not self.verify_position(connected_piece.x + new_x - old_x, connected_piece.y + new_y - old_y, connected_piece.x, connected_piece.y):
+                if not self.verify_position(connected_piece.x + new_x - old_x, connected_piece.y + new_y - old_y, connected_piece.x, connected_piece.y): #if its not possible to move to new coordinates
+                    # put all the pieces in their old positions
                     for old_connected_piece in old_connected_pieces:
                         self.set_square(old_connected_piece.y, old_connected_piece.x, old_connected_piece)
                     return False
 
-        for connected_piece in connected_pieces:  
+        for connected_piece in connected_pieces:  # put all the pieces in their new positions
                 self.set_square(connected_piece.y + new_y - old_y, connected_piece.x + new_x - old_x, connected_piece)
         return True
     
@@ -182,7 +173,7 @@ class Board: #class representing a game board
 
 ################################## Goal
 
-    def goal_state(self):
+    def goal_state(self): # verifies if the goal has been achieved
         pieces = {}
         for y in range(self.rows):
             for x in range(self.cols):
@@ -237,7 +228,7 @@ class Board: #class representing a game board
             connected_pieces = piece.get_connected_pieces(self)
             for piece in connected_pieces:
                 rect = (piece.x * TILESIZE, piece.y * TILESIZE, TILESIZE, TILESIZE)
-                pygame.draw.rect(screen, (255, 0, 0, 50), rect, 2)  #FIXME fix color
+                pygame.draw.rect(screen, (255, 0, 0, 50), rect, 2)
     
 
     def draw_drag(self, screen, font, selected_piece):
@@ -246,7 +237,7 @@ class Board: #class representing a game board
             if x != None:
                 rect = (x * TILESIZE, y * TILESIZE, TILESIZE, TILESIZE)
                 isValid = self.verify_position(x, y, selected_piece[0].x, selected_piece[0].y)
-                pygame.draw.rect(screen, (0, 255, 0, 50) if isValid else pygame.Color('red'), rect, 2)  #FIXME fix color
+                pygame.draw.rect(screen, (0, 255, 0, 50) if isValid else pygame.Color('red'), rect, 2)
 
             s1 = font.render('■', True, pygame.Color(selected_piece[0].color))
             s2 = font.render('■', True, pygame.Color('darkgrey'))

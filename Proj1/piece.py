@@ -7,14 +7,12 @@ class Piece:#class representing a single piece and its properties
         self.color = color
         self.y = y
         self.x = x
-        self.connected = True
 
 
     def __str__(self):
-        #return "Piece has color:" + str(self.color) +  " Y:" + str(self.y) + "X:" + str(self.x) 
         return str(self.color) 
     
-    def __eq__(self, other):
+    def __eq__(self, other):#pieces are equal if same coordinates and color
         if not other:
             return False
         return self.color == other.color and self.y == other.y and self.x == other.x
@@ -31,12 +29,12 @@ class Piece:#class representing a single piece and its properties
         screen.blit(s1, s1.get_rect(center=pos.center))
 
 
-    def set_piece(self, y, x):
+    def set_piece(self, y, x):#change coordinates
         self.x = x
         self.y = y
 
 
-    def get_connected_pieces(self, board):
+    def get_connected_pieces(self, board):#get all pieces connected to the current one, (pieces only connect when adjacent horizontal OR verical and same color)
         visited = set()
         connected = set()
 

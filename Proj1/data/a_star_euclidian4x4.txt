@@ -1,6 +1,6 @@
 pygame 2.2.0 (SDL 2.0.22, Python 3.10.6)
 Hello from the pygame community. https://www.pygame.org/contribute.html
-A* with manhattan heuristic
+A* with euclidian heuristic
 0.8413121700286865
 Filename: /home/danielatomas/Documents/FEUP-IART/Proj1/pc_play.py
 

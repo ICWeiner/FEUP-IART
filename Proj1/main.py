@@ -28,10 +28,10 @@ def main():
     pygame.init()
     font = pygame.font.SysFont('Arial', TILESIZE)
     pygame.display.set_caption('Cohesion')
-    screen = pygame.display.set_mode((SCREEN_SIZE_LVL2))
-    menu1 = Menu(SCREEN_SIZE_LVL2,['New Game 4x4','New Game 6x6','Quit'])
-    menu2 = Menu(SCREEN_SIZE_LVL2,['Play','BFS','DFS','Uniform Cost','Iterative Deepening','A*','Greedy','Quit'])
-    menu3 = Menu(SCREEN_SIZE_LVL2,['Manhattan','Color Cluster','Quit'])
+    screen = pygame.display.set_mode((SCREEN_SIZE_LVL3_4))
+    menu1 = Menu(SCREEN_SIZE_LVL3_4,['Level 1 (4x4)','Level 2 (4x4)', 'Level 3 (6x6)','Level 4 (6x6)','Quit'])
+    menu2 = Menu(SCREEN_SIZE_LVL3_4,['Play','BFS','DFS','Uniform Cost','Iterative Deepening','A*','Greedy','Quit'])
+    menu3 = Menu(SCREEN_SIZE_LVL3_4,['Manhattan','Color Cluster','Quit'])
     menu2.isOpen = False
     menu3.isOpen = False
     score = 0
@@ -45,11 +45,11 @@ def main():
 
             elif menu1.isOpen:
                 menu1.handle_events(events)
-                if menu1.selected_option == 2:
+                if menu1.selected_option == 4:
                     return
                 
                 elif menu1.selected_option is not None:
-                    board = Board(LVL1_ROWS,LVL1_COLS) if menu1.selected_option == 0 else Board(LVL2_ROWS,LVL2_COLS)
+                    board = Board(LVL3_4_ROWS,LVL3_4_COLS,menu1.selected_option + 1) if menu1.selected_option > 1 else Board(LVL1_2_ROWS,LVL1_2_COLS,menu1.selected_option + 1)
                     menu1.isOpen = False
                     menu2.isOpen = True
                     events = []
@@ -61,13 +61,13 @@ def main():
                     return
                 
                 elif menu2.selected_option == 0:
-                    screen = pygame.display.set_mode((SCREEN_SIZE_LVL1)) if menu1.selected_option == 0 else pygame.display.set_mode((SCREEN_SIZE_LVL2))
+                    screen = pygame.display.set_mode((SCREEN_SIZE_LVL3_4)) if menu1.selected_option > 1 else pygame.display.set_mode((SCREEN_SIZE_LVL1_2))
                     piece = None
                     selected_piece = None
                     drop_pos = None
                     moves = 0
                     start_time = time.time()
-                    mode = "UserLvl1" if menu1.selected_option == 0 else "UserLvl2"
+                    mode = "UserLvl3_4" if menu1.selected_option > 1 else "UserLvl1_2"
                     menu2.isOpen = False
                     menu1.selected_option = None
                     menu2.selected_option = None
@@ -78,13 +78,13 @@ def main():
                         events = []
 
                     else:
-                        if menu1.selected_option == 0:
-                            pc_play = PCPlay(GameState(Board(LVL1_ROWS,LVL1_COLS)))
-                            screen = pygame.display.set_mode((SCREEN_SIZE_LVL1))
+                        if menu1.selected_option == 0 or menu1.selected_option == 1:
+                            pc_play = PCPlay(GameState(Board(LVL1_2_ROWS,LVL1_2_COLS,menu1.selected_option + 1)))
+                            screen = pygame.display.set_mode((SCREEN_SIZE_LVL1_2))
 
-                        elif menu1.selected_option == 1:
-                            pc_play = PCPlay(GameState(Board(LVL2_ROWS,LVL2_COLS)))
-                            screen = pygame.display.set_mode((SCREEN_SIZE_LVL2))
+                        elif menu1.selected_option > 1:
+                            pc_play = PCPlay(GameState(Board(LVL3_4_ROWS,LVL3_4_COLS,menu1.selected_option + 1)))
+                            screen = pygame.display.set_mode((SCREEN_SIZE_LVL3_4))
 
                         draw_string(screen,"Loading...",TILESIZE//2)
 
@@ -111,13 +111,13 @@ def main():
                     return
                 
                 elif menu3.selected_option is not None:
-                    if menu1.selected_option == 0:
-                            pc_play = PCPlay(GameState(Board(LVL1_ROWS,LVL1_COLS)))
-                            screen = pygame.display.set_mode((SCREEN_SIZE_LVL1))
+                    if menu1.selected_option == 0 or menu1.selected_option == 1:
+                            pc_play = PCPlay(GameState(Board(LVL1_2_ROWS,LVL1_2_COLS,menu1.selected_option + 1)))
+                            screen = pygame.display.set_mode((SCREEN_SIZE_LVL1_2))
 
-                    elif menu1.selected_option == 1:
-                            pc_play = PCPlay(GameState(Board(LVL2_ROWS,LVL2_COLS)))
-                            screen = pygame.display.set_mode((SCREEN_SIZE_LVL2))
+                    elif menu1.selected_option > 1:
+                            pc_play = PCPlay(GameState(Board(LVL3_4_ROWS,LVL3_4_COLS,menu1.selected_option + 1)))
+                            screen = pygame.display.set_mode((SCREEN_SIZE_LVL3_4))
 
                     draw_string(screen,"Loading...",TILESIZE//2)
 
@@ -138,7 +138,7 @@ def main():
                 menu3.selected_option = None
 
             else:
-                if mode == "UserLvl1" or mode == "UserLvl2":
+                if mode == "UserLvl1_2" or mode == "UserLvl3_4":
                     if e.type == pygame.MOUSEBUTTONDOWN:
                         if piece is not None:
                             selected_piece = piece, x, y
@@ -152,7 +152,7 @@ def main():
 
                 if e.type == pygame.KEYDOWN:
                     if e.key == pygame.K_ESCAPE:
-                        screen = pygame.display.set_mode((SCREEN_SIZE_LVL2))
+                        screen = pygame.display.set_mode((SCREEN_SIZE_LVL3_4))
                         menu1.selected_option = None
                         menu1.isOpen = True
         
@@ -163,13 +163,13 @@ def main():
             menu2.draw(screen)
         elif menu3.isOpen:
             menu3.draw(screen)
-        elif mode == "UserLvl1" or mode == "UserLvl2" or mode == "Goal":
+        elif mode == "UserLvl1_2" or mode == "UserLvl3_4" or mode == "Goal":
             if board.goal_state():
                 if mode != "Goal": score = int(((500-moves)+(500-(time.time()-start_time)*20))) if score >= 0 else 0
                 board.draw_Goal(screen,True,score)
                 mode = "Goal"
-            elif (mode == "UserLvl1" and (moves > 10 or time.time()-start_time > 30) or
-                  mode == "UserLvl2" and (moves > 30 or time.time()-start_time > 80)):
+            elif (mode == "UserLvl1_2" and (moves > 10 or time.time()-start_time > 30) or
+                  mode == "UserLvl3_4" and (moves > 30 or time.time()-start_time > 80)):
                 board.draw_Goal(screen,False)
             else:
                 board.draw(screen, moves, start_time)
