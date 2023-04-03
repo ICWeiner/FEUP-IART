@@ -115,7 +115,8 @@ class PCPlay: #class responsible for showcasing the solution for the various alg
                 return state.move_history
             for child in state.children():
                 if child.id not in came_from:
-                    queue.put( child)
+                    child.search = "greedy"
+                    queue.put(child)
                     came_from[child.id] = state
         return None
 
@@ -139,6 +140,7 @@ class PCPlay: #class responsible for showcasing the solution for the various alg
                 return state.move_history
 
             for child in state.children():
+                child.search = "a"
                 queue.put(child)
                 came_from[child.id] = state
         return None

@@ -65,10 +65,16 @@ class GameState: #class that represents a game state and its various properties
         return self.f() < other.f()
     
     def f(self):
-         if self.heuristic == "manhattan": 
-            return self.depth + self.manhattan_distance_heuristic() #TODO: mudar para aceitar outras heuristicas
+         if self.heuristic == "manhattan":
+            if self.search == "a":#peak coding
+                return self.depth + self.manhattan_distance_heuristic()
+            elif self.search == "greedy":
+                return self.manhattan_distance_heuristic()
          else:
-             return self.depth + self.color_clusters_heuristic()
+            if self.search == "a":
+                return self.depth + self.color_clusters_heuristic()
+            elif self.search == "greedy":
+                return self.color_clusters_heuristic()
 
     def __eq__(self, other):
         return self.board == other.board and self.start_pos == other.start_pos
