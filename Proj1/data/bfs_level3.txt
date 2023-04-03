@@ -1,0 +1,30 @@
+pygame 2.2.0 (SDL 2.0.22, Python 3.10.6)
+Hello from the pygame community. https://www.pygame.org/contribute.html
+BFS
+1619.616313457489
+Filename: /home/danielatomas/Documents/FEUP-IART/Proj1/pc_play.py
+
+Line #    Mem usage    Increment  Occurrences   Line Contents
+=============================================================
+    15    131.6 MiB    131.6 MiB           1       @profile
+    16                                             def bfs(self):
+    17    131.6 MiB      0.0 MiB           1           print("BFS")
+    18    131.6 MiB      0.0 MiB           1           queue = [self.initial_state]
+    19    131.6 MiB      0.0 MiB           1           visited = set() # to avoid visiting the same state twice
+    20    131.6 MiB      0.0 MiB           1           start_time = time.time()
+    21    131.6 MiB      0.0 MiB           1           duplicates =0
+    22    841.6 MiB      0.0 MiB       60969           while queue:
+    23    841.6 MiB      0.0 MiB       60969               state = queue.pop(0)    # get the first state from the queue
+    24    841.6 MiB      0.3 MiB       60969               visited.add(state)  # add the state to the visited set
+    25    841.6 MiB     15.0 MiB       60969               if state.board.goal_state():
+    26    841.6 MiB      0.0 MiB           1                   print(time.time()-start_time)
+    27    841.6 MiB      0.0 MiB           1                   return state.move_history
+    28                                         
+    29    841.6 MiB    693.5 MiB      304267               for child in state.children():
+    30    841.6 MiB      0.3 MiB      243299                   if child not in visited:
+    31    841.6 MiB      1.0 MiB      153571                       queue.append(child) # add the child state to the queue
+    32                                                         else:
+    33    841.6 MiB      0.0 MiB       89728                       duplicates+=1
+    34                                                 return None 
+
+
