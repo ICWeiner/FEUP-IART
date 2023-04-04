@@ -164,13 +164,15 @@ def main():
         elif menu3.isOpen:
             menu3.draw(screen)
         elif mode == "UserLvl1_2" or mode == "UserLvl3_4" or mode == "Goal":
-            if board.goal_state():
-                if mode != "Goal": score = int(((500-moves)+(500-(time.time()-start_time)*20))) if score >= 0 else 0
-                board.draw_Goal(screen,True,score)
-                mode = "Goal"
-            elif (mode == "UserLvl1_2" and (moves > 10 or time.time()-start_time > 30) or
+            temp = int(((500-moves)+(500-(time.time()-start_time)*20)))
+            if temp <= 0 or (mode == "UserLvl1_2" and (moves > 10 or time.time()-start_time > 30) or
                   mode == "UserLvl3_4" and (moves > 30 or time.time()-start_time > 80)):
                 board.draw_Goal(screen,False)
+            elif board.goal_state():
+                if mode != "Goal": 
+                    score = temp
+                board.draw_Goal(screen,True,score)
+                mode = "Goal"
             else:
                 board.draw(screen, moves, start_time)
                 board.draw_pieces(screen, font, selected_piece)
