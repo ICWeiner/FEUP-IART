@@ -12,4 +12,4 @@
 
 ## How to run and use
 
-Open the Jupyter Notebook and run the commmands.
+Open the Jupyter Notebook and run the commands.
